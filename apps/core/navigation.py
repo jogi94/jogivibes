@@ -1,5 +1,5 @@
 from apps.trips.enums import Season, TripStatus, TripType
-from apps.trips.models import Trip
+from apps.trips.models.trip import Trip
 
 
 def get_navigation():
