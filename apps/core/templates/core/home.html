@@ -13,24 +13,7 @@
   <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
 </head>
 <body>
-<header class="site-header" id="site-header">
-  <nav class="nav container" aria-label="Main navigation">
-    <a class="brand" href="/" aria-label="Jogi Vibes home">JOGI VIBES</a>
-    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
-    <div class="desktop-nav">
-      <a href="#trips">Trips</a>
-      <a href="#seasonal">Seasonal Trips</a>
-      <a href="#about">About</a>
-      <a href="#safety">Safety</a>
-      <a href="#faq">FAQ</a>
-      <a href="#contact">Contact</a>
-      <a class="nav-whatsapp" href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a>
-    </div>
-  </nav>
-  <div class="mobile-menu" id="mobile-menu" hidden>
-    <a href="#trips">Trips</a><a href="#seasonal">Seasonal Trips</a><a href="#about">About</a><a href="#safety">Safety</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
-  </div>
-</header>
+{% include "core/components/navbar.html" %}
 
 <main>
 <section class="hero">
