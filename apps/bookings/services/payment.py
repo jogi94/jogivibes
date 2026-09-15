@@ -87,7 +87,10 @@ def get_booking_payment_position(booking_id):
     if settled_total == Decimal("0.00"):
         return "UNPAID"
 
-    if refunded_total >= booking.final_amount:
+    if (
+        settled_total > Decimal("0.00")
+        and refunded_total == settled_total
+    ):
         return "FULLY_REFUNDED"
 
     if settled_total < booking.final_amount:

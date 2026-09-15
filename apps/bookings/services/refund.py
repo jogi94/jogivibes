@@ -165,9 +165,9 @@ def create_refund(
                 "Refund payment does not belong to the booking."
             )
 
-        if payment.status not in SETTLED_PAYMENT_STATUSES:
+        if payment.status != PaymentStatus.PAID:
             raise ValidationError(
-                "Refund can only be created against a settled payment."
+                "Refund can only be created against a PAID payment."
             )
 
         if currency != booking.price_currency.upper():
