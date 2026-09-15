@@ -49,4 +49,6 @@ The implementation should use shared components rather than page-specific duplic
 
 ## Implementation Guidance
 
-Use Django templates with reusable partials/components. Keep business logic out of templates and views. Use Tailwind CSS utilities and existing project conventions where available. Use Unpoly for progressive page interactions without requiring a full SPA architecture.
+Use Django templates with reusable partials/components. Keep business logic out of templates and views. Use Tailwind CSS
+utilities and existing project conventions where available. Use Unpoly for progressive page interactions without
+requiring a full SPA architecture.
