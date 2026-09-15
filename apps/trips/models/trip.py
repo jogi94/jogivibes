@@ -22,6 +22,7 @@ class Trip(TrackedModel):
     seasons = ArrayField(models.CharField(max_length=20, choices=Season.choices), default=list, blank=True)
     duration_days = models.PositiveSmallIntegerField()
     max_altitude_m = models.PositiveIntegerField(null=True, blank=True)
+
     class Meta:
         ordering = ["name"]
         indexes = [

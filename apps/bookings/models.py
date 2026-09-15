@@ -1,12 +1,18 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
+from decimal import Decimal
 from apps.bookings.enums import (
     BookingHoldStatus,
     BookingStatus,
     TripScheduleStatus,
     WaitlistEntryStatus,
     WaitlistOfferStatus,
+    CancellationStatus,
+    PaymentMethod,
+    PaymentProvider,
+    PaymentStatus,
+    RefundStatus,
 )
 from apps.core.models import TimeStampedModel, TrackedModel
 from apps.trips.models.trip import Trip
@@ -310,3 +316,414 @@ class BookingTraveler(TrackedModel):
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}".strip()
+
+
+class Payment(TimeStampedModel):
+    booking = models.ForeignKey(
+        "bookings.Booking",
+        on_delete=models.PROTECT,
+        related_name="payments",
+    )
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    currency = models.CharField(max_length=3)
+    status = models.CharField(
+        max_length=20,
+        choices=PaymentStatus.choices,
+        default=PaymentStatus.PENDING,
+    )
+    method = models.CharField(
+        max_length=20,
+        choices=PaymentMethod.choices,
+    )
+    provider = models.CharField(
+        max_length=20,
+        choices=PaymentProvider.choices,
+        default=PaymentProvider.MANUAL,
+    )
+
+    provider_order_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    provider_transaction_id = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    provider_reference = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    paid_at = models.DateTimeField(null=True, blank=True)
+    failure_reason = models.TextField(null=True, blank=True)
+    notes = models.TextField(null=True, blank=True)
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="created_payments",
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(amount__gt=Decimal("0.00")),
+                name="payment_amount_gt_zero",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(paid_at__isnull=True)
+                    | models.Q(
+                        status__in=[
+                            PaymentStatus.PAID,
+                            PaymentStatus.REFUNDED,
+                        ]
+                    )
+                ),
+                name="payment_paid_at_only_after_payment",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    ~models.Q(
+                        status__in=[
+                            PaymentStatus.PAID,
+                            PaymentStatus.REFUNDED,
+                        ]
+                    )
+                    | models.Q(paid_at__isnull=False)
+                ),
+                name="payment_paid_status_requires_paid_at",
+            ),
+            models.UniqueConstraint(
+                fields=["provider", "provider_transaction_id"],
+                condition=models.Q(provider_transaction_id__isnull=False),
+                name="unique_payment_provider_transaction",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["booking", "status"],
+                name="payment_booking_status_idx",
+            ),
+            models.Index(
+                fields=["status", "created"],
+                name="payment_status_created_idx",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        if self.currency != self.currency.upper():
+            raise ValidationError(
+                {"currency": "Currency must use uppercase ISO-4217 format."}
+            )
+
+        if len(self.currency) != 3 or not self.currency.isalpha():
+            raise ValidationError(
+                {"currency": "Currency must be a 3-letter ISO-4217 code."}
+            )
+
+    def __str__(self):
+        return f"Payment #{self.pk} - {self.amount} {self.currency}"
+
+
+class CancellationPolicy(TimeStampedModel):
+    trip_schedule = models.OneToOneField(
+        "bookings.TripSchedule",
+        on_delete=models.PROTECT,
+        related_name="cancellation_policy",
+    )
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.name} - Schedule {self.trip_schedule_id}"
+
+
+class CancellationPolicyRule(TimeStampedModel):
+    policy = models.ForeignKey(
+        CancellationPolicy,
+        on_delete=models.PROTECT,
+        related_name="rules",
+    )
+    minimum_days_before_departure = models.PositiveIntegerField()
+    refund_percentage = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(
+                    minimum_days_before_departure__gte=0
+                ),
+                name="cancel_rule_days_gte_zero",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(refund_percentage__gte=Decimal("0.00"))
+                    & models.Q(refund_percentage__lte=Decimal("100.00"))
+                ),
+                name="cancel_rule_refund_pct_valid",
+            ),
+            models.UniqueConstraint(
+                fields=[
+                    "policy",
+                    "minimum_days_before_departure",
+                ],
+                name="unique_cancel_policy_threshold",
+            ),
+        ]
+
+    def __str__(self):
+        return (
+            f"{self.policy_id}: "
+            f"{self.minimum_days_before_departure} days -> "
+            f"{self.refund_percentage}%"
+        )
+
+
+class Cancellation(TimeStampedModel):
+    booking = models.ForeignKey(
+        "bookings.Booking",
+        on_delete=models.PROTECT,
+        related_name="cancellations",
+    )
+
+    status = models.CharField(
+        max_length=20,
+        choices=CancellationStatus.choices,
+        default=CancellationStatus.REQUESTED,
+    )
+
+    reason = models.TextField()
+    requested_at = models.DateTimeField()
+
+    approved_at = models.DateTimeField(null=True, blank=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+
+    requested_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="requested_cancellations",
+    )
+    processed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="processed_cancellations",
+        null=True,
+        blank=True,
+    )
+
+    rejection_reason = models.TextField(null=True, blank=True)
+
+    cancellation_policy = models.ForeignKey(
+        CancellationPolicy,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="cancellations",
+    )
+    cancellation_policy_rule = models.ForeignKey(
+        CancellationPolicyRule,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="cancellations",
+    )
+
+    policy_id_snapshot = models.PositiveBigIntegerField(
+        null=True,
+        blank=True,
+    )
+    policy_name_snapshot = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+    rule_min_days_snapshot = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+    )
+    refund_percentage_snapshot = models.DecimalField(
+        max_digits=5,
+        decimal_places=2,
+        null=True,
+        blank=True,
+    )
+    days_before_departure = models.IntegerField(
+        null=True,
+        blank=True,
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["booking"],
+                condition=models.Q(
+                    status__in=[
+                        CancellationStatus.REQUESTED,
+                        CancellationStatus.APPROVED,
+                    ]
+                ),
+                name="unique_active_booking_cancellation",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["booking", "status"],
+                name="cancel_booking_status_idx",
+            ),
+            models.Index(
+                fields=["status", "created"],
+                name="cancel_status_created_idx",
+            ),
+        ]
+
+    def __str__(self):
+        return f"Cancellation #{self.pk} - Booking {self.booking_id}"
+
+
+class Refund(TimeStampedModel):
+    booking = models.ForeignKey(
+        "bookings.Booking",
+        on_delete=models.PROTECT,
+        related_name="refunds",
+    )
+    payment = models.ForeignKey(
+        Payment,
+        on_delete=models.PROTECT,
+        related_name="refunds",
+    )
+    cancellation = models.ForeignKey(
+        Cancellation,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="refunds",
+    )
+
+    amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    currency = models.CharField(max_length=3)
+
+    status = models.CharField(
+        max_length=20,
+        choices=RefundStatus.choices,
+        default=RefundStatus.PENDING,
+    )
+
+    calculated_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+    approved_amount = models.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+    )
+
+    override_reason = models.TextField(
+        null=True,
+        blank=True,
+    )
+    override_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="refund_overrides",
+        null=True,
+        blank=True,
+    )
+
+    provider = models.CharField(
+        max_length=20,
+        choices=PaymentProvider.choices,
+        default=PaymentProvider.MANUAL,
+    )
+    provider_reference = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+    )
+
+    reason = models.TextField()
+
+    processed_at = models.DateTimeField(
+        null=True,
+        blank=True,
+    )
+    failure_reason = models.TextField(
+        null=True,
+        blank=True,
+    )
+
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="created_refunds",
+    )
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                condition=models.Q(amount__gt=Decimal("0.00")),
+                name="refund_amount_gt_zero",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(calculated_amount__gte=Decimal("0.00")),
+                name="refund_calculated_amount_gte_zero",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(approved_amount__gte=Decimal("0.00")),
+                name="refund_approved_amount_gte_zero",
+            ),
+            models.CheckConstraint(
+                condition=(
+                    models.Q(
+                        approved_amount=models.F("calculated_amount")
+                    )
+                    | (
+                        models.Q(override_reason__isnull=False)
+                        & ~models.Q(override_reason="")
+                        & models.Q(override_by__isnull=False)
+                    )
+                ),
+                name="refund_override_requires_reason_and_user",
+            ),
+        ]
+        indexes = [
+            models.Index(
+                fields=["booking", "status"],
+                name="refund_booking_status_idx",
+            ),
+            models.Index(
+                fields=["payment", "status"],
+                name="refund_payment_status_idx",
+            ),
+        ]
+
+    def clean(self):
+        super().clean()
+
+        if self.currency != self.currency.upper():
+            raise ValidationError(
+                {"currency": "Currency must use uppercase ISO-4217 format."}
+            )
+
+        if len(self.currency) != 3 or not self.currency.isalpha():
+            raise ValidationError(
+                {"currency": "Currency must be a 3-letter ISO-4217 code."}
+            )
+
+    def __str__(self):
+        return f"Refund #{self.pk} - {self.amount} {self.currency}"

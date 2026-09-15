@@ -32,3 +32,39 @@ class WaitlistOfferStatus(models.TextChoices):
     ACCEPTED = "accepted", "Accepted"
     EXPIRED = "expired", "Expired"
     DECLINED = "declined", "Declined"
+
+
+class PaymentStatus(models.TextChoices):
+    PENDING = "PENDING", "Pending"
+    PAID = "PAID", "Paid"
+    FAILED = "FAILED", "Failed"
+    CANCELLED = "CANCELLED", "Cancelled"
+    REFUNDED = "REFUNDED", "Refunded"
+
+
+class PaymentMethod(models.TextChoices):
+    UPI = "UPI", "UPI"
+    BANK_TRANSFER = "BANK_TRANSFER", "Bank transfer"
+    CASH = "CASH", "Cash"
+    CARD = "CARD", "Card"
+    OTHER = "OTHER", "Other"
+
+
+class PaymentProvider(models.TextChoices):
+    MANUAL = "MANUAL", "Manual"
+    RAZORPAY = "RAZORPAY", "Razorpay"
+
+
+class CancellationStatus(models.TextChoices):
+    REQUESTED = "REQUESTED", "Requested"
+    APPROVED = "APPROVED", "Approved"
+    COMPLETED = "COMPLETED", "Completed"
+    REJECTED = "REJECTED", "Rejected"
+    CANCELLED = "CANCELLED", "Cancelled"
+
+
+class RefundStatus(models.TextChoices):
+    PENDING = "PENDING", "Pending"
+    PROCESSING = "PROCESSING", "Processing"
+    COMPLETED = "COMPLETED", "Completed"
+    FAILED = "FAILED", "Failed"
