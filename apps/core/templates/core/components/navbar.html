@@ -2,9 +2,34 @@
   <nav class="nav container" aria-label="Main navigation">
     <a class="brand" href="/" aria-label="Jogi Vibes home">JOGI VIBES</a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+
     <div class="desktop-nav">
-      <a href="#trips">Trips</a>
-      <a href="#seasonal">Seasonal Trips</a>
+      {% if navigation_trips %}
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button" aria-expanded="false">
+            Trips <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="nav-dropdown-menu" hidden>
+            {% for label, value in navigation_trips %}
+              <a href="#trips">{{ label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if navigation_seasonal %}
+        <div class="nav-dropdown">
+          <button class="nav-dropdown-toggle" type="button" aria-expanded="false">
+            Seasonal Trips <span aria-hidden="true">⌄</span>
+          </button>
+          <div class="nav-dropdown-menu" hidden>
+            {% for label, value in navigation_seasonal %}
+              <a href="#seasonal">{{ label }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
       <a href="#about">About</a>
       <a href="#safety">Safety</a>
       <a href="#faq">FAQ</a>
@@ -12,12 +37,34 @@
       <a class="nav-whatsapp" href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a>
     </div>
   </nav>
+
   <div class="mobile-menu" id="mobile-menu" hidden>
-    <a href="#trips">Trips</a>
-    <a href="#seasonal">Seasonal Trips</a>
+    {% if navigation_trips %}
+      <details class="mobile-nav-group">
+        <summary>Trips</summary>
+        <div class="mobile-nav-submenu">
+          {% for label, value in navigation_trips %}
+            <a href="#trips">{{ label }}</a>
+          {% endfor %}
+        </div>
+      </details>
+    {% endif %}
+
+    {% if navigation_seasonal %}
+      <details class="mobile-nav-group">
+        <summary>Seasonal Trips</summary>
+        <div class="mobile-nav-submenu">
+          {% for label, value in navigation_seasonal %}
+            <a href="#seasonal">{{ label }}</a>
+          {% endfor %}
+        </div>
+      </details>
+    {% endif %}
+
     <a href="#about">About</a>
     <a href="#safety">Safety</a>
     <a href="#faq">FAQ</a>
     <a href="#contact">Contact</a>
+    <a href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a>
   </div>
 </header>
