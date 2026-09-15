@@ -1,17 +1,30 @@
-from apps.core.navigation import get_navigation
+from apps.trips.enums import Season, TripStatus, TripType
+from apps.trips.models import Trip
 
 
 def navigation(request):
-    data = get_navigation()
-    published = data["published"]
-    data["trips"] = [
-        (label, value)
-        for label, value in data["trips"]
-        if published.filter(type=value).exists()
+    published = Trip.objects.filter(status=TripStatus.PUBLISHED)
+
+    trip_categories = [
+        ("Treks", TripType.TREK),
+        ("Expeditions", TripType.EXPEDITION),
+        ("Road Trips", TripType.BIKE_ROADTRIP),
+        ("Family Holidays", TripType.FAMILY_HOLIDAYS),
     ]
-    data["seasonal"] = [
-        (label, value)
-        for label, value in data["seasonal"]
-        if published.filter(seasons__contains=[value]).exists()
+    seasonal_categories = [
+        ("Winter Holidays", Season.WINTER),
+        ("Summer Holidays", Season.SUMMER),
     ]
-    return {"navigation_trips": data["trips"], "navigation_seasonal": data["seasonal"]}
+
+    return {
+        "navigation_trips": [
+            (label, value)
+            for label, value in trip_categories
+            if published.filter(type=value).exists()
+        ],
+        "navigation_seasonal": [
+            (label, value)
+            for label, value in seasonal_categories
+            if published.filter(seasons__contains=[value]).exists()
+        ],
+    }
