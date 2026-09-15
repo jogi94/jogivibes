@@ -1,0 +1,87 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jogi Vibes — Adventure Beyond the Ordinary</title>
+  <meta name="description" content="Explore treks, expeditions and journeys with Jogi Vibes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/unpoly@3.10.2/unpoly.min.js"></script>
+  <link rel="stylesheet" href="{% static 'core/css/home.css' %}">
+</head>
+<body>
+<header class="site-header" id="site-header">
+  <nav class="nav container" aria-label="Main navigation">
+    <a class="brand" href="/" aria-label="Jogi Vibes home">JOGI VIBES</a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu">Menu</button>
+    <div class="desktop-nav">
+      <a href="#trips">Trips</a>
+      <a href="#seasonal">Seasonal Trips</a>
+      <a href="#about">About</a>
+      <a href="#safety">Safety</a>
+      <a href="#faq">FAQ</a>
+      <a href="#contact">Contact</a>
+      <a class="nav-whatsapp" href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobile-menu" hidden>
+    <a href="#trips">Trips</a><a href="#seasonal">Seasonal Trips</a><a href="#about">About</a><a href="#safety">Safety</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="hero-content container">
+    <p class="eyebrow">JOGI VIBES</p>
+    <h1>Adventure Beyond<br>the Ordinary</h1>
+    <p class="hero-copy">Explore treks, expeditions and journeys with Jogi Vibes.</p>
+    <div class="hero-actions"><a class="button button-primary" href="#trips">Explore Trips</a><a class="button button-secondary" href="https://wa.me/918537003014" target="_blank" rel="noopener">Talk to Jogi Vibes</a></div>
+  </div>
+</section>
+
+<section class="section" id="trips">
+  <div class="container">
+    <div class="section-heading"><p class="eyebrow">EXPLORE</p><h2>Featured Trips</h2><p>Find a journey that matches your pace, ambition and season.</p></div>
+    {% if featured_trips %}
+    <div class="trip-grid">
+      {% for trip in featured_trips %}
+      <article class="trip-card">
+        <div class="trip-image">{% if trip.cover_image %}<img src="{{ trip.cover_image }}" alt="{{ trip.name }}">{% else %}<div class="image-placeholder" aria-hidden="true">Mountain Journey</div>{% endif %}</div>
+        <div class="trip-body"><p class="meta">{{ trip.get_type_display }}{% if trip.destination %} · {{ trip.destination }}{% endif %}</p><h3>{{ trip.name }}</h3><p class="trip-meta">{{ trip.duration_days }} days{% if trip.get_difficulty_display %} · {{ trip.get_difficulty_display }}{% endif %}{% if trip.max_altitude_m %} · {{ trip.max_altitude_m }}m{% endif %}</p>{% if trip.description %}<p>{{ trip.description|truncatewords:20 }}</p>{% endif %}<a class="text-link" href="#">View Trip →</a></div>
+      </article>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state"><h3>New journeys are being prepared.</h3><p>Check back soon for published trips from Jogi Vibes.</p><a class="button button-primary" href="https://wa.me/918537003014" target="_blank" rel="noopener">Talk to Jogi Vibes</a></div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section sand" id="departures">
+  <div class="container">
+    <div class="section-heading"><p class="eyebrow">WHEN WE GO</p><h2>Upcoming Departures</h2><p>Choose a scheduled journey and start planning.</p></div>
+    {% if departures %}<div class="departure-list">{% for departure in departures %}<article class="departure-card"><div><p class="meta">{{ departure.trip.name }}</p><h3>{{ departure.start_date|date:"d M Y" }}{% if departure.end_date %} — {{ departure.end_date|date:"d M Y" }}{% endif %}</h3></div><span class="availability availability-available">Available</span><a class="button button-primary" href="#">View Departure</a></article>{% endfor %}</div>{% else %}<div class="empty-state compact"><h3>No upcoming departures published yet.</h3><p>Contact Jogi Vibes for current trip plans and custom dates.</p></div>{% endif %}
+  </div>
+</section>
+
+<section class="section" id="about"><div class="container split"><div class="editorial-visual" aria-hidden="true"><span>THE JOURNEY</span></div><div><p class="eyebrow">WHY JOGI VIBES</p><h2>Built around the journey, not just the destination.</h2><p class="lead">We create focused mountain journeys with clear itineraries, practical preparation and a genuine connection to the outdoors.</p><p>Every trip should tell you where you are going, what to expect and how to prepare before you set out.</p></div></div></section>
+
+<section class="section sand" id="safety"><div class="container"><div class="section-heading centered"><p class="eyebrow">TRAVEL READY</p><h2>Safety Comes First</h2><p>Good adventures begin with preparation and responsible decisions.</p></div><div class="feature-grid"><article><span class="feature-number">01</span><h3>Preparation</h3><p>Understand the itinerary, conditions and requirements before departure.</p></article><article><span class="feature-number">02</span><h3>Leadership</h3><p>Journeys are planned with clear coordination and communication.</p></article><article><span class="feature-number">03</span><h3>Readiness</h3><p>Choose experiences that match your experience, fitness and comfort.</p></article><article><span class="feature-number">04</span><h3>Responsible Travel</h3><p>Respect mountain environments and the communities that call them home.</p></article></div></div></section>
+
+<section class="section" id="seasonal"><div class="container"><div class="section-heading"><p class="eyebrow">BY SEASON</p><h2>Seasonal Trips</h2><p>Explore journeys shaped by the mountains and the time of year.</p></div><div class="seasonal-grid"><a class="seasonal-card" href="#trips"><span>WINTER</span><strong>Winter Holidays</strong><em>Explore winter journeys →</em></a><a class="seasonal-card summer" href="#trips"><span>SUMMER</span><strong>Summer Holidays</strong><em>Explore summer journeys →</em></a></div></div></section>
+
+<section class="section sand"><div class="container"><div class="section-heading centered"><p class="eyebrow">HOW IT WORKS</p><h2>From idea to trail.</h2></div><ol class="steps"><li><span>01</span><strong>Explore</strong><p>Discover a journey.</p></li><li><span>02</span><strong>Choose Trip</strong><p>Find your experience.</p></li><li><span>03</span><strong>Choose Departure</strong><p>Select your date.</p></li><li><span>04</span><strong>Book</strong><p>Share your details.</p></li><li><span>05</span><strong>Prepare & Travel</strong><p>Get ready for the journey.</p></li></ol></div></section>
+
+<section class="section" id="faq"><div class="container faq"><div class="section-heading"><p class="eyebrow">QUESTIONS</p><h2>Frequently Asked Questions</h2></div><details><summary>How do I choose a trip?</summary><p>Start with the destination, difficulty, duration and available departure that fit you best.</p></details><details><summary>Can I ask about a custom date?</summary><p>Yes. Contact Jogi Vibes to discuss a custom date or group requirement.</p></details><details><summary>How does booking work?</summary><p>Select a published departure when available, provide the required traveler details and follow the booking instructions.</p></details></div></section>
+
+<section class="final-cta" id="contact"><div class="container"><p class="eyebrow">JOGI VIBES</p><h2>READY FOR YOUR NEXT ADVENTURE?</h2><div class="hero-actions"><a class="button button-light" href="#trips">Explore Trips</a><a class="button button-outline-light" href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a></div></div></section>
+</main>
+
+<footer class="footer"><div class="container footer-grid"><div><div class="brand">JOGI VIBES</div><p>Adventure beyond the ordinary.</p></div><div><strong>Explore</strong><a href="#trips">Trips</a><a href="#seasonal">Seasonal Trips</a></div><div><strong>Company</strong><a href="#about">About</a><a href="#safety">Safety</a></div><div><strong>Help</strong><a href="#faq">FAQ</a><a href="#contact">Contact</a><a href="https://wa.me/918537003014" target="_blank" rel="noopener">WhatsApp</a></div></div><div class="container footer-bottom"><span>© Jogi Vibes</span></div></footer>
+<script src="{% static 'core/js/home.js' %}"></script>
+</body>
+</html>

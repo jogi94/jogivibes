@@ -1,54 +1,32 @@
-# Jogi Vibes — UX/UI Architecture
+# Jogi Vibes UX/UI Architecture
 
 ## Status
+Approved — Step 2B.
 
-STEP 2B — Approved
+## Principles
+- Customer-first, mobile-first experience.
+- Modern Himalayan Adventure visual direction.
+- Django server-rendered templates with Unpoly progressive enhancement.
+- Server remains authoritative for availability, pricing, booking and validation.
+- Thin views; existing service/use-case layer for business logic.
+- No SPA framework.
+- No new database models or fields for the Home Page.
+- Do not invent trip data, pricing, availability, testimonials, certifications or safety claims.
 
-## Scope
+## Customer Journey
+Discover Trip → Trip Detail → Select Departure → Select Package → Traveler Information → Booking → Payment → Confirmation.
 
-This document defines the reusable UX/UI architecture for the Jogi Vibes public website.
+## Primary Public Screens
+Home, Trips/Experiences, Trip Detail, Departure Selection, Package Selection, Booking, Confirmation, Inquiry, About, Safety, FAQ, Contact and legal pages where required.
 
-## Design Principles
+## Home Page Sections
+Hero, Featured Trips, Upcoming Departures, Why Jogi Vibes, Safety/Trust, Real Experiences, Seasonal Trips, How It Works, FAQ, Final CTA and Footer.
 
-- Mobile-first and responsive
-- Modern Himalayan adventure visual direction
-- Clear discovery-to-inquiry journey
-- Reusable components and design tokens
-- Strong visual hierarchy and readable typography
-- Progressive enhancement compatible with Unpoly
-- Accessible interactions and semantic HTML
-- Thin Django views with reusable presentation components
+## Interaction Strategy
+Use normal navigation for major page transitions. Use Unpoly fragments where content changes in place, including departure/package selection, validation and FAQ interactions. External WhatsApp actions remain normal external links.
 
-## Core User Journey
+## Accessibility
+Use semantic headings and landmarks, keyboard-accessible controls, visible focus states, meaningful link labels, sufficient contrast, touch targets of approximately 44px, and reduced-motion support.
 
-Home → Discover Trips → Trip Detail → Inquiry / Booking → Communication
-
-## Public Information Architecture
-
-- Home
-- Trips / Experiences
-- Trip detail pages
-- Search / Filters
-- Community / WhatsApp
-
-## Reusable UI System
-
-The implementation should use shared components rather than page-specific duplication. Core reusable elements include:
-
-- Global navigation
-- Footer
-- Buttons and CTA patterns
-- Typography tokens
-- Color and spacing tokens
-- Cards
-- Badges / status labels
-- Form controls
-- Responsive containers
-- Section headers
-- Trip metadata blocks
-
-## Implementation Guidance
-
-Use Django templates with reusable partials/components. Keep business logic out of templates and views. Use Tailwind CSS
-utilities and existing project conventions where available. Use Unpoly for progressive page interactions without
-requiring a full SPA architecture.
+## Architecture Guardrail
+Any persistent content system, new taxonomy, new backend workflow/API, or other capability outside existing architecture requires `ARCHITECTURE CHANGE REQUIRED` before implementation.
