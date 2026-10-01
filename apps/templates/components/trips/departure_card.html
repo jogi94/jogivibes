@@ -1,0 +1,8 @@
+<article class="departure-card">
+  <div>
+    <p class="meta">{{ departure.trip.name }}</p>
+    <h3>{{ departure.start_date|date:"d M Y" }}{% if departure.end_date %} — {{ departure.end_date|date:"d M Y" }}{% endif %}</h3>
+  </div>
+  {% include "components/ui/badge.html" with status=departure.status|default:"available" label=departure.status_label|default:"Available" %}
+  <a class="button button-primary" href="{{ departure.url|default:'#' }}">View Departure</a>
+</article>
