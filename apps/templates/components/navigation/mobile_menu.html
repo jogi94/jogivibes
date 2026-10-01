@@ -1,0 +1,5 @@
+<div class="mobile-menu" id="mobile-menu" hidden>
+{% for item in navigation.trips %}<details class="mobile-nav-group"><summary>{{ item.label }}</summary><div class="mobile-nav-submenu">{% for child in item.children %}<a href="{{ child.url }}">{{ child.label }}</a>{% endfor %}</div></details>{% endfor %}
+{% for item in navigation.seasonal %}<details class="mobile-nav-group"><summary>{{ item.label }}</summary><div class="mobile-nav-submenu">{% for child in item.children %}<a href="{{ child.url }}">{{ child.label }}</a>{% endfor %}</div></details>{% endfor %}
+{% for item in navigation.utility %}<a{% if item.external %} target="_blank" rel="noopener"{% endif %} href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
+</div>
