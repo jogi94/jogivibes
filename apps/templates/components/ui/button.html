@@ -1,0 +1,3 @@
+{% with style=style|default:"primary" %}
+<a class="button button-{{ style }}{% if full_width %} button-full{% endif %}" href="{{ href }}">{{ label }}</a>
+{% endwith %}
