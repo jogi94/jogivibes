@@ -1,0 +1,8 @@
+<header class="site-header" id="site-header"><nav class="nav container" aria-label="Main navigation">
+<a class="brand" href="/" aria-label="Jogi Vibes home">JOGI VIBES</a>
+<button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu" aria-label="Open menu">Menu</button>
+<div class="desktop-nav">
+{% for item in navigation.trips %}<div class="nav-dropdown"><button class="nav-dropdown-toggle" type="button" aria-expanded="false">{{ item.label }} <span aria-hidden="true">⌄</span></button><div class="nav-dropdown-menu" hidden>{% for child in item.children %}<a href="{{ child.url }}">{{ child.label }}</a>{% endfor %}</div></div>{% endfor %}
+{% for item in navigation.seasonal %}<div class="nav-dropdown"><button class="nav-dropdown-toggle" type="button" aria-expanded="false">{{ item.label }} <span aria-hidden="true">⌄</span></button><div class="nav-dropdown-menu" hidden>{% for child in item.children %}<a href="{{ child.url }}">{{ child.label }}</a>{% endfor %}</div></div>{% endfor %}
+{% for item in navigation.utility %}<a{% if item.external %} target="_blank" rel="noopener"{% endif %} href="{{ item.url }}">{{ item.label }}</a>{% endfor %}
+</div></nav>{% include "components/navigation/mobile_menu.html" %}</header>
