@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Jogi Vibes{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Adventure beyond the ordinary with Jogi Vibes.{% endblock %}">
+  {% block head %}{% endblock %}
+  <link rel="stylesheet" href="{% static 'core/css/design-system.css' %}">
+  {% block styles %}{% endblock %}
+  <script src="https://unpkg.com/unpoly@3.10.2/unpoly.min.js"></script>
+</head>
+<body>
+  {% include "components/navigation/navbar.html" %}
+  <main id="main-content">
+    {% block content %}{% endblock %}
+  </main>
+  {% include "components/footer/footer.html" %}
+  <script src="{% static 'core/js/home.js' %}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
