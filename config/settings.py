@@ -14,7 +14,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = 'django-insecure-+yl(4_&emh&7l84o8s5)*_jkky==6ta*zqc6y&=@h=g^#5=4-='
+SECRET_KEY = 'django-insecure-+yl(4_&emh&7l84o8s5)*_jkky==6ta*zqc6y&=@h=g^#5=4=-'
 DEBUG = True
 ALLOWED_HOSTS = []
 
@@ -29,12 +29,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = []
-LOCAL_APPS = [
-    "apps.users",
-    "apps.core",
-    "apps.trips",
-    "apps.bookings",
-]
+LOCAL_APPS = ["apps.users", "apps.core", "apps.trips", "apps.bookings"]
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
@@ -52,16 +47,14 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            BASE_DIR / "apps" / "templates",
-        ],
+        "DIRS": [BASE_DIR / "apps" / "templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'apps.core.nav_context.navigation',
+                'apps.core.context_processors.navigation',
             ],
         },
     },
@@ -81,18 +74,10 @@ DATABASES = {
 }
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 LANGUAGE_CODE = 'en-us'
