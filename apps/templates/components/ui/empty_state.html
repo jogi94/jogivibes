@@ -1,0 +1,1 @@
+<div class="empty-state{% if compact %} compact{% endif %}"><h3>{{ title }}</h3>{% if description %}<p>{{ description }}</p>{% endif %}{% if action_label %}{% include "components/ui/button.html" with label=action_label href=action_url style="primary" %}{% endif %}</div>
