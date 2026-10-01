@@ -65,6 +65,7 @@
   </div>
 </section>
 
+{% if navigation.seasonal %}
 <section class="section" id="seasonal">
   <div class="container">
     {% include "components/ui/section_header.html" with eyebrow="BY SEASON" title="Seasonal Trips" description="Explore journeys shaped by the mountains and the time of year." %}
@@ -79,6 +80,7 @@
     </div>
   </div>
 </section>
+{% endif %}
 
 <section class="section sand">
   <div class="container">
