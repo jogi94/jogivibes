@@ -1,0 +1,101 @@
+<header class="site-header">
+    <nav class="site-navbar" aria-label="Primary navigation">
+
+        <div class="site-navbar__container">
+
+            <!-- Brand -->
+            <a
+                class="site-navbar__brand"
+                href="{{ navigation.brand.url }}"
+                aria-label="{{ navigation.brand.label }}"
+            >
+                {{ navigation.brand.label }}
+            </a>
+
+            <!-- Desktop navigation -->
+            <div id="desktop-navigation" class="desktop-navigation">
+
+                <ul class="desktop-navigation__list">
+
+                    {% for group in navigation.groups %}
+                        {% if group.items %}
+                            <li class="desktop-navigation__item desktop-navigation__item--dropdown">
+
+                                <button
+                                    class="desktop-navigation__trigger"
+                                    type="button"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"
+                                >
+                                    <span>{{ group.label }}</span>
+                                    <span class="desktop-navigation__chevron" aria-hidden="true">
+                                        ↓
+                                    </span>
+                                </button>
+
+                                <ul class="desktop-navigation__dropdown">
+                                    {% for item in group.items %}
+                                        <li>
+                                            <a href="{{ item.url }}">
+                                                {{ item.label }}
+                                            </a>
+                                        </li>
+                                    {% endfor %}
+                                </ul>
+
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% for link in navigation.links %}
+                        <li class="desktop-navigation__item">
+                            <a href="{{ link.url }}">
+                                {{ link.label }}
+                            </a>
+                        </li>
+                    {% endfor %}
+
+                </ul>
+
+                <!-- WhatsApp CTA -->
+<!--                <a-->
+<!--                    class="navbar-cta"-->
+<!--                    href="{{ navigation.cta.url }}"-->
+<!--                    {% if navigation.cta.external %}-->
+<!--                        target="_blank"-->
+<!--                        rel="noopener noreferrer"-->
+<!--                    {% endif %}-->
+<!--                >-->
+<!--                    {{ navigation.cta.label }}-->
+<!--                </a>-->
+
+            </div>
+            <div>
+                <button class="search-btn"><i class="ti ti-search"></i></button>
+            </div>
+            <div>
+                Hello, Jogi
+            </div>
+
+            <!-- Mobile menu trigger -->
+            <button
+                type="button"
+                id="mobile-menu-trigger"
+                class="mobile-menu-trigger"
+                aria-expanded="false"
+                aria-controls="mobile-navigation"
+                aria-label="Open navigation menu"
+            >
+                <span class="mobile-menu-trigger__label">Menu</span>
+                <span class="mobile-menu-trigger__icon" aria-hidden="true">
+                    ☰
+                </span>
+            </button>
+
+        </div>
+
+        <!-- Mobile navigation -->
+        {% include "components/navigation/mobile_menu.html" %}
+
+    </nav>
+</header>

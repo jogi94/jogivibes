@@ -1,0 +1,343 @@
+/* =========================================================
+   Jogi Vibes Navbar
+   ========================================================= */
+
+body {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 100vh;
+    margin: 0;
+}
+
+.site-header {
+    position: relative;
+    z-index: 1000;
+    /*background: #FAF9F6;*/
+    /*border-bottom: 1px solid #DDE1DC;*/
+}
+
+.site-navbar {
+    width: 100%;
+    color: #FFFFFF;
+}
+
+.site-navbar__container {
+    width: min(1500px, calc(100% - 40px));
+    min-height: 76px;
+    margin: 0 auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+}
+
+.site-navbar__brand {
+    flex-shrink: 0;
+
+    color: #FFFFFF;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-decoration: none;
+}
+
+.desktop-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 28px;
+    flex: 1;
+}
+
+.search-btn {
+    width: 42px;
+    height: 42px;
+    border: 1px solid #fff;
+    border-radius: 50%;
+    background: transparent;
+    color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.desktop-navigation__list {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    margin: 0;
+    padding: 0;
+
+    list-style: none;
+}
+
+.desktop-navigation__item {
+    position: relative;
+}
+
+.desktop-navigation__item > a,
+.desktop-navigation__trigger {
+    min-height: 44px;
+    padding: 10px 12px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    border: 0;
+    background: transparent;
+
+    color: #FFFFFF;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.desktop-navigation__item > a:hover,
+.desktop-navigation__trigger:hover {
+    color: #1F3A34;
+}
+
+.desktop-navigation__trigger:focus-visible,
+.desktop-navigation__item > a:focus-visible,
+.navbar-cta:focus-visible,
+.mobile-menu-trigger:focus-visible,
+.mobile-navigation a:focus-visible,
+.mobile-navigation summary:focus-visible {
+    outline: 2px solid #C87941;
+    outline-offset: 3px;
+}
+
+.desktop-navigation__chevron {
+    font-size: 0.75rem;
+    transition: transform 160ms ease;
+}
+
+.desktop-navigation__item--dropdown:hover .desktop-navigation__chevron,
+.desktop-navigation__item--dropdown:focus-within .desktop-navigation__chevron {
+    transform: translateY(2px);
+}
+
+/* Desktop dropdown */
+
+.desktop-navigation__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+
+    min-width: 210px;
+    margin: 0;
+    padding: 8px;
+
+    background: #FFFFFF;
+    border: 1px solid #DDE1DC;
+    box-shadow: 0 12px 30px rgba(24, 32, 30, 0.08);
+
+    list-style: none;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+
+    transition:
+        opacity 140ms ease,
+        transform 140ms ease,
+        visibility 140ms ease;
+}
+
+.desktop-navigation__item--dropdown:hover .desktop-navigation__dropdown,
+.desktop-navigation__item--dropdown:focus-within .desktop-navigation__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.desktop-navigation__dropdown a {
+    display: block;
+    padding: 11px 12px;
+
+    color: #18201E;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 500;
+
+    text-decoration: none;
+}
+
+.desktop-navigation__dropdown a:hover {
+    background: #F2EDE4;
+    color: #1F3A34;
+}
+
+/* CTA */
+
+.navbar-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 44px;
+    padding: 10px 18px;
+
+    border-radius: 4px;
+    background: #1F3A34;
+
+    color: #FFFFFF;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition:
+        background-color 140ms ease,
+        transform 140ms ease;
+}
+
+.navbar-cta:hover {
+    background: #142A25;
+    transform: translateY(-1px);
+}
+
+/* Mobile trigger */
+
+.mobile-menu-trigger {
+    display: none;
+
+    min-height: 44px;
+    padding: 8px 4px;
+
+    border: 0;
+    background: transparent;
+
+    color: #1F3A34;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.mobile-menu-trigger__icon {
+    font-size: 1.15rem;
+}
+
+/* Mobile navigation */
+
+.mobile-navigation {
+    display: none;
+
+    border-top: 1px solid #DDE1DC;
+    background: #FAF9F6;
+}
+
+.mobile-navigation[hidden] {
+    display: none;
+}
+
+.mobile-navigation__list {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 12px 0 24px;
+
+    list-style: none;
+}
+
+.mobile-navigation__item {
+    border-bottom: 1px solid #DDE1DC;
+}
+
+.mobile-navigation__item > a,
+.mobile-navigation summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    width: 100%;
+    min-height: 50px;
+    padding: 12px 4px;
+
+    color: #18201E;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.mobile-navigation summary {
+    list-style: none;
+}
+
+.mobile-navigation summary::-webkit-details-marker {
+    display: none;
+}
+
+.mobile-navigation__submenu {
+    margin: 0;
+    padding: 0 0 8px 16px;
+
+    list-style: none;
+}
+
+.mobile-navigation__submenu a {
+    display: block;
+    padding: 10px 4px;
+
+    color: #68716D;
+    font-family: Manrope, Arial, Helvetica, sans-serif;
+    font-size: 0.9rem;
+
+    text-decoration: none;
+}
+
+.mobile-navigation__submenu a:hover {
+    color: #1F3A34;
+}
+
+.mobile-navigation__item--cta {
+    margin-top: 16px;
+    border: 0;
+}
+
+.mobile-navigation__item--cta a {
+    justify-content: center;
+
+    background: #1F3A34;
+    color: #FFFFFF;
+}
+
+/* =========================================================
+   Responsive
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .site-navbar__container {
+        min-height: 68px;
+        width: min(100% - 32px, 1200px);
+    }
+
+    .desktop-navigation {
+        display: none;
+    }
+
+    .mobile-menu-trigger {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobile-navigation {
+        display: block;
+    }
+}

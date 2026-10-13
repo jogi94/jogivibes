@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Jogi Vibes{% endblock %}
+
+{% block styles %}
+<link href="{% static 'core/css/home.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero-section">
+
+    <!-- Left-side vertical slide indicator -->
+    <div class="hero-indicator-group">
+        <div class="brand-carousel-indicator">
+            <span class="indicator-line"></span>
+            <span class="indicator-dot active" data-slide="1">1</span>
+            <span class="indicator-line"></span>
+            <span class="indicator-dot" data-slide="2">2</span>
+            <span class="indicator-line"></span>
+            <span class="indicator-dot" data-slide="3">3</span>
+            <span class="indicator-line"></span>
+            <span class="indicator-dot" data-slide="4">4</span>
+            <span class="indicator-line"></span>
+        </div>
+        <div class="hero-slide-number">
+            <span class="current-slide">01</span>
+            <span>/</span>
+            <span class="total-slides">04</span>
+        </div>
+    </div>
+
+   <!-- Main hero content: populated from the active carousel destination -->
+    <div class="hero-copy">
+        <h1 class="hero-title">Himalayan Treks</h1>
+        <p class="hero-description">Discover breathtaking trails and unforgettable trekking adventures
+            in the Himalayas.</p>
+        <a class="hero-cta" href="#">Explore <span aria-hidden="true">→</span></a>
+    </div>
+
+    <!-- Right-side carousel -->
+    <div aria-label="Featured trips" class="hero-carousel">
+        <h2 class="hero-carousel-title">Himalayan Treks</h2>
+        <div class="hero-card-track">
+            <!-- Card 1: Kashmir -->
+            <button class="hero-trip-card active" data-background="{% static 'images/landscape.jpg' %}"
+                    data-description="Discover breathtaking trails and unforgettable trekking adventures in the Himalayas."
+                    data-slide="0" data-title="Kashmir" type="button">
+                <img alt="Himalayan mountain trekking landscape" src="{% static 'images/landscape.jpg' %}">
+                <span class="hero-card-caption">Kashmir</span>
+            </button>
+
+            <!-- Card 2: Ladakh -->
+            <button class="hero-trip-card"
+                    data-background="{% static 'images/landscape3.jpg' %}"
+                    data-description="Challenge yourself with extraordinary Himalayan adventures and high-altitude journeys."
+                    data-slide="1" data-title="Ladakh" type="button">
+                <img alt="High-altitude Himalayan expedition" src="{% static 'images/landscape3.jpg' %}">
+                <span class="hero-card-caption">Ladakh</span>
+            </button>
+
+            <!-- Card 3: Norway -->
+            <button class="hero-trip-card"
+                    data-background="{% static 'images/landscape4.jpg' %}"
+                    data-description="Explore winding mountain roads, scenic valleys, and unforgettable Himalayan destinations."
+                    data-slide="2" data-title="Norway" type="button">
+                <img alt="Scenic Himalayan mountain road" src="{% static 'images/landscape4.jpg' %}">
+                <span class="hero-card-caption">Norway</span>
+            </button>
+
+            <!-- Card 4: Iceland -->
+            <button class="hero-trip-card"
+                    data-background="{% static 'images/landscape2.jpg' %}"
+                    data-description="Create memorable mountain getaways with relaxing escapes and beautiful Himalayan scenery."
+                    data-slide="3" data-title="Iceland" type="button">
+                <img alt="Beautiful Himalayan holiday destination" src="{% static 'images/landscape2.jpg' %}">
+                <span class="hero-card-caption">Iceland</span>
+            </button>
+        </div>
+    </div>
+
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'core/js/home.js' %}"></script>
+{% endblock %}

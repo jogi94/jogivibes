@@ -1,0 +1,31 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Jogi Vibes{% endblock %}</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" />
+    <link rel="stylesheet" href="{% static 'core/css/site.css' %}">
+    <script src="{% static 'core/js/site.js' %}"></script>
+
+    {% block styles %}{% endblock %}
+</head>
+
+<body>
+<div class="hero-background hero-background-current" aria-hidden="true"></div>
+<div class="hero-background hero-background-next" aria-hidden="true"></div>
+
+    {% include "components/navigation/navbar.html" %}
+
+    <main id="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'core/js/site.js' %}"></script>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

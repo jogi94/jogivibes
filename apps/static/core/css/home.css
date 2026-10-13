@@ -1,0 +1,444 @@
+
+/* =========================================
+   JOGI VIBES — HOME PAGE
+   ========================================= */
+
+
+/* =========================================
+   HERO SECTION — INITIAL PAGE LOAD
+   ========================================= */
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 400ms ease;
+}
+
+.hero-section.is-ready {
+    opacity: 1;
+    visibility: visible;
+}
+
+
+/* =========================================
+   HERO BACKGROUND TRANSITION LAYERS
+   ========================================= */
+
+.hero-background {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
+.hero-background-current {
+    z-index: -2;
+    opacity: 1;
+}
+
+.hero-background-next {
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 900ms ease-in-out;
+}
+
+
+/* =========================================
+   HERO TEXT TRANSITIONS
+   ========================================= */
+
+.hero-title,
+.hero-description {
+    transition:
+        opacity 350ms ease,
+        transform 350ms ease;
+}
+
+.hero-title.is-changing,
+.hero-description.is-changing {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+
+/* =========================================
+   VERTICAL SLIDE INDICATOR
+   ========================================= */
+
+.hero-indicator-group {
+    position: absolute;
+    top: 10px;
+    left: 40px;
+    z-index: 3;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand-carousel-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+}
+
+.indicator-line {
+    display: block;
+    width: 1px;
+    height: 100px;
+    flex: 0 0 100px;
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.indicator-dot {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex: 0 0 24px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 0;
+
+    border: 1px solid transparent;
+    border-radius: 50%;
+
+    background: transparent;
+    color: transparent;
+
+    font: 600 10px/1 Manrope, Arial, sans-serif;
+    text-align: center;
+    cursor: pointer;
+}
+
+.indicator-dot.active {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.18);
+}
+
+.hero-indicator-group .indicator-dot:not(.active) {
+    background-color: #fff !important;
+    border: 2px solid #fff !important;
+    color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Small dots for inactive slides only */
+.indicator-dot:not(.active) {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.75);
+    color: transparent;
+    box-shadow: none;
+}
+
+.hero-slide-number {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    color: #fff;
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 10px;
+    letter-spacing: 1px;
+    white-space: nowrap;
+
+    transform: rotate(-90deg);
+    transform-origin: center;
+    margin-top: 18px;
+}
+
+.current-slide {
+    font-weight: 700;
+}
+
+
+/* =========================================
+   MAIN HERO COPY — LEFT SIDE
+   ========================================= */
+
+.hero-copy {
+    position: absolute;
+    left: 8%;
+    top: 42%;
+    transform: translateY(-50%);
+
+    width: min(540px, 42vw);
+
+    color: #fff;
+    z-index: 3;
+}
+
+.hero-title {
+    margin: 0 0 18px;
+    color: #fff;
+
+    font-family: Manrope, Arial, sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    font-weight: 800;
+    line-height: 1.05;
+    text-transform: uppercase;
+}
+
+.hero-description {
+    max-width: 440px;
+    margin: 0 0 26px;
+
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 24px;
+
+    padding: 14px 22px;
+    border-radius: 5px;
+
+    background: royalblue;
+    color: #fff;
+
+    font-family: Manrope, Arial, sans-serif;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.hero-cta:hover {
+    background: royalblue;
+}
+
+
+/* =========================================
+   RIGHT-SIDE TRIP CAROUSEL
+   ========================================= */
+
+.hero-carousel {
+    position: absolute;
+    left: 53%;
+    right: 0;
+    top: 42%;
+    transform: translateY(-50%);
+
+    overflow: hidden;
+    padding: 28px 0;
+
+    z-index: 2;
+
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 400ms ease;
+}
+
+.hero-carousel.is-ready {
+    opacity: 1;
+    visibility: visible;
+}
+
+.hero-carousel-title {
+    margin: 0 0 18px;
+    padding-right: 20px;
+
+    color: #fff;
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   CAROUSEL TRACK
+   ========================================= */
+
+.hero-card-track {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform 650ms ease-in-out;
+    will-change: transform;
+}
+
+
+/* =========================================
+   INDIVIDUAL TRIP CARDS
+   ========================================= */
+
+.hero-trip-card {
+    position: relative;
+    flex: 0 0 280px;
+    height: 440px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    opacity: 1;
+    transform: scale(0.92);
+    transform-origin: center center;
+    transition: transform 450ms ease-in-out;
+    cursor: pointer;
+    text-align: left;
+}
+
+.hero-trip-card.active {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.hero-trip-card img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.hero-card-caption {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    padding: 36px 14px 16px;
+
+    color: #fff;
+    background: linear-gradient(
+        transparent,
+        rgba(0, 0, 0, 0.75)
+    );
+
+    font-family: Manrope, Arial, sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+
+/* =========================================
+   TABLET
+   ========================================= */
+
+@media (max-width: 900px) {
+    .hero-indicator-group {
+        left: 20px;
+    }
+
+    .hero-copy {
+        left: 8%;
+        width: 38vw;
+    }
+
+    .hero-carousel {
+        left: 48%;
+    }
+
+    .hero-trip-card {
+        flex-basis: 170px;
+        height: 260px;
+    }
+
+    .indicator-line {
+        height: 65px;
+        flex-basis: 65px;
+    }
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 600px) {
+    .hero-section {
+        min-height: 100vh;
+        padding-top: 100px;
+        padding-bottom: 30px;
+    }
+
+    .hero-indicator-group {
+        top: 110px;
+        left: 15px;
+    }
+
+    .hero-copy {
+        position: relative;
+        top: auto;
+        left: auto;
+        transform: none;
+
+        width: auto;
+        max-width: 100%;
+
+        margin: 0 20px 30px 65px;
+    }
+
+    .hero-title {
+        font-size: clamp(2.5rem, 11vw, 4rem);
+    }
+
+    .hero-description {
+        font-size: 0.85rem;
+    }
+
+    .hero-carousel {
+        position: relative;
+        top: auto;
+        left: auto;
+        right: auto;
+        transform: none;
+
+        margin: 30px 0 0 65px;
+        padding: 0 0 20px;
+    }
+
+    .hero-carousel-title {
+        font-size: 1.1rem;
+    }
+
+    .hero-card-track {
+        gap: 10px;
+    }
+
+    .hero-trip-card {
+        flex-basis: 145px;
+        height: 210px;
+    }
+
+    .indicator-line {
+        height: 45px;
+        flex-basis: 45px;
+    }
+}
+
+
+/* =========================================
+   REDUCED MOTION ACCESSIBILITY
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-section,
+    .hero-carousel,
+    .hero-background-next,
+    .hero-title,
+    .hero-description,
+    .hero-card-track,
+    .hero-trip-card {
+        transition-duration: 0.01ms;
+    }
+}

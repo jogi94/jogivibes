@@ -1,0 +1,60 @@
+<div
+    id="mobile-navigation"
+    class="mobile-navigation"
+    hidden
+    aria-label="Mobile navigation"
+>
+    <nav aria-label="Mobile navigation">
+
+        <ul class="mobile-navigation__list">
+
+            {% for group in navigation.groups %}
+                {% if group.items %}
+                    <li class="mobile-navigation__item">
+
+                        <details>
+                            <summary>
+                                <span>{{ group.label }}</span>
+                                <span aria-hidden="true">↓</span>
+                            </summary>
+
+                            <ul class="mobile-navigation__submenu">
+                                {% for item in group.items %}
+                                    <li>
+                                        <a href="{{ item.url }}">
+                                            {{ item.label }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </details>
+
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% for link in navigation.links %}
+                <li class="mobile-navigation__item">
+                    <a href="{{ link.url }}">
+                        {{ link.label }}
+                    </a>
+                </li>
+            {% endfor %}
+
+            <li class="mobile-navigation__item mobile-navigation__item--cta">
+                <a
+                    href="{{ navigation.cta.url }}"
+                    {% if navigation.cta.external %}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    {% endif %}
+                >
+                    {{ navigation.cta.label }}
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+</div>
