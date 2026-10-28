@@ -56,8 +56,23 @@ class ItineraryInline(admin.StackedInline):
     verbose_name_plural = "itinerary"
 
 
+class TripAdminForm(forms.ModelForm):
+    seasons = forms.MultipleChoiceField(
+        choices=Season.choices,
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label="Seasons",
+        help_text="Select all seasons in which this trip is offered.",
+    )
+
+    class Meta:
+        model = Trip
+        fields = "__all__"
+
+
 @admin.register(Trip)
 class TripAdmin(TrackedModelAdminMixin, admin.ModelAdmin):
+    form = TripAdminForm
     list_display = (
         "name",
         "destination",

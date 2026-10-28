@@ -51,12 +51,16 @@ document.addEventListener("DOMContentLoaded", () => {
      * A = initial main hero.
      * The carousel cards supply the remaining destinations.
      */
+    const heroCopy = document.querySelector(".hero-copy");
     const heroDestination = {
         title: heroTitle.textContent.trim(),
         description: heroDescription.textContent.trim(),
         background: currentBackground
             ? getComputedStyle(currentBackground).backgroundImage
-            : ""
+            : "",
+        image: heroCopy?.dataset.image || "",
+        alt: heroCopy?.dataset.imageAlt || heroTitle.textContent.trim(),
+        caption: heroTitle.textContent.trim()
     };
 
     function readCard(card) {
