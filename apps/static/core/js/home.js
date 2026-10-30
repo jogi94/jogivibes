@@ -16,6 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroDescription = document.querySelector(".hero-description");
     const carouselTitle = document.querySelector(".hero-carousel-title");
     const currentSlide = document.querySelector(".current-slide");
+    const heroExplore = document.querySelector(".hero-cta");
 
     const indicatorDots = Array.from(
         document.querySelectorAll(".indicator-dot")
@@ -55,6 +56,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const heroDestination = {
         title: heroTitle.textContent.trim(),
         description: heroDescription.textContent.trim(),
+        url: heroExplore?.getAttribute("href") || "",
         background: currentBackground
             ? getComputedStyle(currentBackground).backgroundImage
             : "",
@@ -70,6 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
             title: card.dataset.title || "",
             description: card.dataset.description || "",
+            url: card.dataset.url || "",
             background: card.dataset.background || "",
             image: image ? image.getAttribute("src") || "" : "",
             alt: image ? image.alt || "" : "",
@@ -94,6 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
         card.dataset.title = destination.title;
         card.dataset.description = destination.description;
         card.dataset.background = destination.background;
+        card.dataset.url = destination.url || "";
 
         const image = card.querySelector("img");
         const caption = card.querySelector(".hero-card-caption");
@@ -214,6 +218,9 @@ document.addEventListener("DOMContentLoaded", () => {
          * Start the background transition at the same time.
          */
         updateBackground(destination.background);
+        if (heroExplore && destination.url) {
+        heroExplore.href = destination.url;
+}
     }
 
     function updateIndicators() {

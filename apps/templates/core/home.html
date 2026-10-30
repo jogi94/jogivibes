@@ -31,7 +31,7 @@
         data-image-alt="{{ carousel_slides.0.carousel_image_alt }}">
         <h1 class="hero-title">{{ carousel_slides.0.name }}</h1>
         <p class="hero-description">{{ carousel_slides.0.description }}</p>
-        <a class="hero-cta" href="#">Explore <span aria-hidden="true">→</span></a>
+        <a class="hero-cta" href="{{ carousel_slides.0.get_absolute_url }}">Explore <span aria-hidden="true">→</span></a>
     </div>
 
     <!-- Real trip cards -->
@@ -39,8 +39,10 @@
 <!--        <h2 class="hero-carousel-title">{{ carousel_slides.0.name }}</h2>-->
         <div class="hero-card-track">
             {% for trip in carousel_slides|slice:"1:" %}
-            <button class="hero-trip-card {% if forloop.first %}active{% endif %}" data-background="{{ trip.carousel_image_url }}"
+            <button class="hero-trip-card {% if forloop.first %}active{% endif %}"
+                    data-background="{{ trip.carousel_image_url }}"
                     data-description="{{ trip.description|escape }}"
+                    data-url="{{ trip.get_absolute_url }}"
                     data-slide="{{ forloop.counter0 }}" data-title="{{ trip.name|escape }}" type="button"
                     aria-label="View {{ trip.name|escape }}">
                 <img alt="{{ trip.carousel_image_alt }}" src="{{ trip.carousel_image_url }}">
