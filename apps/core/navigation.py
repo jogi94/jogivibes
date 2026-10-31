@@ -16,12 +16,16 @@ def get_navigation():
 
     trip_categories = [
         {
+            "label": "Yatra",
+            "type": TripType.TREK,
+        },
+        {
             "label": "Treks",
             "type": TripType.TREK,
         },
         {
-            "label": "Expeditions",
-            "type": TripType.EXPEDITION,
+            "label": "Darshan",
+            "type": TripType.TREK,
         },
         {
             "label": "Road Trips",

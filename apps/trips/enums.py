@@ -2,11 +2,12 @@ from django.db import models
 
 
 class TripType(models.TextChoices):
-    TREK = "trek", "Trek"
-    EXPEDITION = "expedition", "Expedition"
-    BIKE_ROADTRIP = "bike_roadtrip", "Bike Roadtrip"
-    FOREIGN_TRIP = "foreign_trip", "Foreign Trip"
-    FAMILY_HOLIDAYS = "family_holidays", "Family Holidays"
+    YATRA = "YATRA", "Yatra"
+    TREK = "TREK", "Trek"
+    DARSHAN = "DARSHAN", "Darshan"
+    BIKE_ROADTRIP = "BIKE_ROADTRIP", "Bike Roadtrip"
+    FOREIGN_TRIP = "FOREIGN_TRIP", "Foreign Trip"
+    FAMILY_HOLIDAYS = "FAMILY_HOLIDAYS", "Family Holidays"
 
 
 class TripStatus(models.TextChoices):
