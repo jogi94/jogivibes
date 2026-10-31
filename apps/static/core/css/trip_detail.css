@@ -1,0 +1,65 @@
+
+/* Trip detail background */
+.hero-background-current {
+    background-image:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.75),
+            rgba(0, 0, 0, 0.25)
+        );
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Trip detail hero */
+.trip-detail-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 140px 8% 60px;
+    box-sizing: border-box;
+    color: #fff;
+}
+
+.trip-detail-content {
+    position: relative;
+    z-index: 2;
+    max-width: 650px;
+}
+
+.trip-detail-content h1 {
+    font-family: Manrope, Arial, sans-serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.trip-detail-content p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 28px;
+}
+
+.trip-detail-content a {
+    color: #fff;
+    margin-right: 20px;
+}
+
+.trip-detail-content .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 15px;
+    padding: 14px 22px;
+    background: royalblue;
+    border-radius: 5px;
+    text-decoration: none;
+}
+
+.trip-detail-content .hero-cta:hover {
+    background: #142A25;
+}

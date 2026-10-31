@@ -1,6 +1,6 @@
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
-
+from django.urls import reverse
 from apps.core.models import TrackedModel
 from apps.trips.enums import (
     Season,
@@ -34,4 +34,16 @@ class Trip(TrackedModel):
 
     def __str__(self):
         return self.name
+
+    def get_absolute_url(self):
+        return reverse("trips:trip_detail", args=(self.slug,))
+
+    def get_create_url(self):
+        return reverse("trips:trip_create", args=(self.slug,))
+
+    def get_update_url(self):
+        return reverse("trips:trip_update", args=(self.slug,))
+
+    def get_delete_url(self):
+        return reverse("trips:trip_delete", args=(self.slug,))
 

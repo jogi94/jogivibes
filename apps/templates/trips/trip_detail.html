@@ -1,0 +1,46 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'core/css/trip_detail.css' %}">
+
+<style>
+    /* Hide homepage carousel backgrounds on trip detail */
+    .hero-background {
+        display: none;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section
+    class="trip-detail-hero"
+    {% if trip.detail_images %}
+        style="background-image:
+            linear-gradient(
+                90deg,
+                rgba(0, 0, 0, 0.75),
+                rgba(0, 0, 0, 0.25)
+            ),
+            url('{{ trip.detail_images.0.image.url }}');"
+    {% endif %}
+>
+    <div class="trip-detail-content">
+
+        <h1>{{ trip.name }}</h1>
+
+        <p>{{ trip.description }}</p>
+
+        {% if user.is_staff %}
+            <a href="#">Edit trip</a>
+            <a href="#">Delete trip</a>
+        {% endif %}
+
+        <a href="{% url 'trips:list' %}" class="hero-cta">
+            Explore More Trips <span aria-hidden="true">→</span>
+        </a>
+
+    </div>
+</section>
+{% endblock %}

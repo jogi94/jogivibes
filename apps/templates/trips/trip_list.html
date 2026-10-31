@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Trips</h1>
+
+{% if user.is_staff %}
+    <a href="{% url 'trips:create' %}">Create trip</a>
+{% endif %}
+
+<ul>
+    {% for trip in trips %}
+        <li>
+            <a href="{% url 'trips:detail' trip.slug %}">
+                {{ trip.name }}
+            </a>
+
+            {% if user.is_staff %}
+                | <a href="{% url 'trips:update' trip.slug %}">Edit</a>
+                | <a href="{% url 'trips:delete' trip.slug %}">Delete</a>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No trips available.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
