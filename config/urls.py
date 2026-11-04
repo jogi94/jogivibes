@@ -12,6 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", HomeView.as_view(), name="home"),
     path("trips/", include("apps.trips.urls", namespace="trips")),
+    path("leads/", include("apps.leads.urls", namespace="leads")),
 ]
 
 if settings.DEBUG:

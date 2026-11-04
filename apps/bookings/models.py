@@ -48,33 +48,23 @@ class TripSchedule(TrackedModel):
 
 
 class Booking(TrackedModel):
-    booked_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.PROTECT,
+    booked_by = models.ForeignKey( settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="bookings")
+    originating_lead = models.ForeignKey(
+        "leads.Lead",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name="bookings",
+        help_text="The CRM lead that generated this booking, if applicable.",
     )
-    trip_schedule = models.ForeignKey(
-        TripSchedule,
-        on_delete=models.PROTECT,
-        related_name="bookings",
-    )
-    pricing = models.ForeignKey(
-        "trips.Pricing",
-        on_delete=models.PROTECT,
-        related_name="bookings",
-    )
-    status = models.CharField(
-        max_length=20,
-        choices=BookingStatus.choices,
-        default=BookingStatus.CONFIRMED,
-        db_index=True,
-    )
+    trip_schedule = models.ForeignKey(TripSchedule, on_delete=models.PROTECT, related_name="bookings")
+    pricing = models.ForeignKey("trips.Pricing", on_delete=models.PROTECT, related_name="bookings")
+    status = models.CharField(max_length=20, choices=BookingStatus.choices, default=BookingStatus.CONFIRMED,
+                              db_index=True)
     capacity_quantity = models.PositiveIntegerField(default=1)
-
     package_id_snapshot = models.PositiveBigIntegerField()
     package_name_snapshot = models.CharField(max_length=255)
     package_slug_snapshot = models.CharField(max_length=280)
-
     unit_price = models.DecimalField(max_digits=12, decimal_places=2)
     price_currency = models.CharField(max_length=3)
     quantity = models.PositiveIntegerField()
