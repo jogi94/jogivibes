@@ -1,12 +1,11 @@
-from apps.trips.enums import Season, TripStatus, TripType
-from apps.trips.models.trip import Trip
+
+from apps.trips.enums import Season, TripStatus
+from apps.trips.models.trip import Trip, TripCategory
 
 
 def get_navigation():
     """
     Build the public navigation structure.
-
-    Navigation data is kept separate from template presentation.
     Only categories with published content are exposed.
     """
 
@@ -14,27 +13,16 @@ def get_navigation():
         status=TripStatus.PUBLISHED
     )
 
-    trip_categories = [
+    trip_categories = TripCategory.objects.filter(
+        trips__status=TripStatus.PUBLISHED
+    ).distinct().order_by("name")
+
+    trips = [
         {
-            "label": "Yatra",
-            "type": TripType.TREK,
-        },
-        {
-            "label": "Treks",
-            "type": TripType.TREK,
-        },
-        {
-            "label": "Darshan",
-            "type": TripType.TREK,
-        },
-        {
-            "label": "Road Trips",
-            "type": TripType.BIKE_ROADTRIP,
-        },
-        {
-            "label": "Family Holidays",
-            "type": TripType.FAMILY_HOLIDAYS,
-        },
+            "label": category.name,
+            "url": "/#trips",
+        }
+        for category in trip_categories
     ]
 
     seasonal_categories = [
@@ -46,17 +34,6 @@ def get_navigation():
             "label": "Summer Holidays",
             "season": Season.SUMMER,
         },
-    ]
-
-    trips = [
-        {
-            "label": category["label"],
-            "url": "/#trips",
-        }
-        for category in trip_categories
-        if published_trips.filter(
-            type=category["type"]
-        ).exists()
     ]
 
     seasonal_trips = [
@@ -86,22 +63,10 @@ def get_navigation():
             },
         ],
         "links": [
-            {
-                "label": "About",
-                "url": "/#about",
-            },
-            {
-                "label": "Safety",
-                "url": "/#safety",
-            },
-            {
-                "label": "FAQ",
-                "url": "/#faq",
-            },
-            {
-                "label": "Contact",
-                "url": "/#contact",
-            },
+            {"label": "About", "url": "/#about"},
+            {"label": "Safety", "url": "/#safety"},
+            {"label": "FAQ", "url": "/#faq"},
+            {"label": "Contact", "url": "/#contact"},
         ],
         "cta": {
             "label": "WhatsApp",
