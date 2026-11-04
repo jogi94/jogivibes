@@ -5,12 +5,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from apps.core.views import HomeView
+from apps.core.views import HomeView, DashboardView
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", HomeView.as_view(), name="home"),
+    path("dashboard/", DashboardView.as_view(), name="dashboard"),
     path("trips/", include("apps.trips.urls", namespace="trips")),
     path("leads/", include("apps.leads.urls", namespace="leads")),
 ]

@@ -1,0 +1,27 @@
+<header class="dashboard-header">
+    <!-- Brand -->
+    <button
+            aria-controls="dashboard-sidebar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+            class="dashboard-menu-toggle"
+            type="button">
+        <i class="ti ti-menu-2"></i>
+    </button>
+    <a href="/" class="dashboard-brand">
+        Jogi Vibes
+    </a>
+
+    <!-- Header actions -->
+    <div class="dashboard-header-actions">
+        <button type="button"
+                class="dashboard-icon-button"
+                aria-label="Notifications">
+            <i class="ti ti-bell"></i>
+        </button>
+        <div class="dashboard-user">
+            <i class="ti ti-user-circle"></i>
+            <span>{{ request.user.get_full_name|default:request.user.get_username }}</span>
+        </div>
+    </div>
+</header>

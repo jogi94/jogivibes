@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard | Jogi Vibes{% endblock %}
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/dashboard.css' %}">
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'core/js/dashboard.js' %}"></script>
+{% endblock %}
+{% block body %}
+<div class="dashboard">
+    {% include "components/dashboard/header.html" %}
+    <div class="dashboard-layout">
+        {% include "components/dashboard/sidebar.html" %}
+        <main id="main-content" class="dashboard-main">
+            {% block dashboard_content %}
+                <h1>Dashboard</h1>
+                <p>
+                    Welcome, {{ request.user.get_full_name|default:request.user.get_username }}!
+                </p>
+            {% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %}
