@@ -11,7 +11,7 @@ from apps.core.views import HomeView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", HomeView.as_view(), name="home"),
-    path("trip/", include("apps.trips.urls", namespace="trips")),
+    path("trips/", include("apps.trips.urls", namespace="trips")),
 ]
 
 if settings.DEBUG:

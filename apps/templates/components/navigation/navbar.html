@@ -18,34 +18,41 @@
                 <ul class="desktop-navigation__list">
 
                     {% for group in navigation.groups %}
-                        {% if group.items %}
-                            <li class="desktop-navigation__item desktop-navigation__item--dropdown">
+                    {% if group.items %}
+                        <li class="desktop-navigation__item desktop-navigation__item--dropdown">
+
+                            <div class="desktop-navigation__heading">
+
+                                <a href="{{ group.url }}">
+                                    {{ group.label }}
+                                </a>
 
                                 <button
                                     class="desktop-navigation__trigger"
                                     type="button"
                                     aria-haspopup="true"
                                     aria-expanded="false"
+                                    aria-label="Open {{ group.label }} submenu"
                                 >
-                                    <span>{{ group.label }}</span>
-                                    <span class="desktop-navigation__chevron" aria-hidden="true">
-                                        ↓
-                                    </span>
+                                    <span class="desktop-navigation__chevron"
+                                          aria-hidden="true">↓</span>
                                 </button>
 
-                                <ul class="desktop-navigation__dropdown">
-                                    {% for item in group.items %}
-                                        <li>
-                                            <a href="{{ item.url }}">
-                                                {{ item.label }}
-                                            </a>
-                                        </li>
-                                    {% endfor %}
-                                </ul>
+                            </div>
 
-                            </li>
-                        {% endif %}
-                    {% endfor %}
+                            <ul class="desktop-navigation__dropdown">
+                                {% for item in group.items %}
+                                    <li>
+                                        <a href="{{ item.url }}">
+                                            {{ item.label }}
+                                        </a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+
+                        </li>
+                    {% endif %}
+                {% endfor %}
 
                     {% for link in navigation.links %}
                         <li class="desktop-navigation__item">

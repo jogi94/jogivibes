@@ -16,8 +16,19 @@ from apps.core.mixins import PermissionRequiredMixin
 
 class TripListView(ListView):
     model = Trip
-    template_name = "trips/trip_list.html.html"
+    template_name = "trips/trip_list.html"
     context_object_name = "trips"
+
+    def get_queryset(self):
+        return (
+            Trip.objects.prefetch_related(
+                Prefetch(
+                    "images",
+                    queryset=TripImage.objects.filter(is_cover=True),
+                    to_attr="cover_images",
+                )
+            )
+        )
 
 
 class TripDetailView(DetailView):

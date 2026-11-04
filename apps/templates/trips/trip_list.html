@@ -1,26 +1,96 @@
 {% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explore Trips | Jogi Vibes{% endblock %}
+
+{% block styles %}
+<link href="{% static 'core/css/trip_list.css' %}" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
-<h1>Trips</h1>
 
-{% if user.is_staff %}
-    <a href="{% url 'trips:create' %}">Create trip</a>
-{% endif %}
+<section class="trips-page">
 
-<ul>
+    <!-- Page heading -->
+    <div class="trips-header">
+        <div>
+            <span class="section-eyebrow">EXPLORE WITH JOGI VIBES</span>
+            <h1>Find Your Next <span>Adventure.</span></h1>
+            <p>
+                Discover incredible destinations, meaningful journeys,
+                and unforgettable experiences.
+            </p>
+        </div>
+
+        {% if user.is_staff %}
+        <a class="create-trip-btn" href="{% url 'trips:trip_create' %}"><span>+</span> Create Trip</a>
+        {% endif %}
+    </div>
+
+    <!-- Trip cards -->
+    <div class="trips-grid">
     {% for trip in trips %}
-        <li>
-            <a href="{% url 'trips:detail' trip.slug %}">
-                {{ trip.name }}
+        <article class="trip-card">
+            <a class="trip-card-image"
+               href="{% url 'trips:trip_detail' trip.slug %}">
+                {% with cover=trip.cover_images|first %}
+                    {% if cover %}
+                        <img
+                            src="{{ cover.image.url }}"
+                            alt="{{ cover.caption|default:trip.name }}"
+                            loading="lazy"
+                        >
+                    {% else %}
+                        <div class="trip-image-placeholder">
+                            <span>JOGI VIBES</span>
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <div class="trip-image-overlay"></div>
+
+                <span class="trip-explore">
+                    Explore <span aria-hidden="true">↗</span>
+                </span>
             </a>
 
-            {% if user.is_staff %}
-                | <a href="{% url 'trips:update' trip.slug %}">Edit</a>
-                | <a href="{% url 'trips:delete' trip.slug %}">Delete</a>
-            {% endif %}
-        </li>
-    {% empty %}
-        <li>No trips available.</li>
-    {% endfor %}
-</ul>
+            <div class="trip-card-content">
+
+                <div class="trip-card-heading">
+                    <h2>
+                        <a href="{% url 'trips:trip_detail' trip.slug %}">
+                            {{ trip.name }}
+                        </a>
+                    </h2>
+                </div>
+
+                <div class="trip-card-footer">
+
+                    <a class="trip-view-link"
+                       href="{% url 'trips:trip_detail' trip.slug %}">
+                        Discover Trip <span aria-hidden="true">→</span>
+                    </a>
+
+                    {% if user.is_staff %}
+                        <div class="trip-admin-actions">
+                            <a href="{% url 'trips:trip_update' trip.slug %}">Edit</a>
+                            <a href="{% url 'trips:trip_delete' trip.slug %}">Delete</a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </article>
+
+        {% empty %}
+            <div class="trips-empty">
+                <span class="section-eyebrow">NEW JOURNEYS COMING</span>
+                <h2>No trips available right now.</h2>
+                <p>We're preparing our next adventures. Check back soon!</p>
+            </div>
+        {% endfor %}
+    </div>
+
+</section>
+
 {% endblock %}

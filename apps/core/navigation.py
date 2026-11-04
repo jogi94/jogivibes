@@ -55,6 +55,7 @@ def get_navigation():
         "groups": [
             {
                 "label": "Trips",
+                "url": "/trips/",
                 "items": trips,
             },
             {
