@@ -11,7 +11,7 @@ from apps.trips.models.package import Package
 from apps.trips.models.package_item import PackageItem
 from apps.trips.models.pricing import Pricing
 from apps.trips.models.schedule_package import SchedulePackage
-from apps.trips.models.trip import Trip
+from apps.trips.models.trip import Trip, TripCategory
 from apps.trips.models.trip_image import TripImage
 
 
@@ -56,6 +56,13 @@ class ItineraryInline(admin.StackedInline):
     verbose_name_plural = "itinerary"
 
 
+@admin.register(TripCategory)
+class TripCategoryAdmin(admin.ModelAdmin):
+    list_display = ("name", "slug")
+    search_fields = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
+
+
 class TripAdminForm(forms.ModelForm):
     seasons = forms.MultipleChoiceField(
         choices=Season.choices,
@@ -76,14 +83,14 @@ class TripAdmin(TrackedModelAdminMixin, admin.ModelAdmin):
     list_display = (
         "name",
         "destination",
-        "type",
+        "category",
         "status",
         "difficulty",
         "duration_days",
         "max_altitude_m",
         "modified",
     )
-    list_filter = ("type", "status", "difficulty", SeasonListFilter)
+    list_filter = ("status", "difficulty", SeasonListFilter)
     search_fields = ("name", "slug", "destination__name")
     prepopulated_fields = {"slug": ("name",)}
     list_select_related = ("destination",)
@@ -106,8 +113,8 @@ class TripAdmin(TrackedModelAdminMixin, admin.ModelAdmin):
             "Classification and publication",
             {
                 "fields": (
-                    "type",
                     "status",
+                    "category",
                     "difficulty",
                     "seasons",
                 )
