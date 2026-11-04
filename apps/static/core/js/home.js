@@ -14,21 +14,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const heroTitle = document.querySelector(".hero-title");
     const heroDescription = document.querySelector(".hero-description");
-    const carouselTitle = document.querySelector(".hero-carousel-title");
-    const currentSlide = document.querySelector(".current-slide");
     const heroExplore = document.querySelector(".hero-cta");
+    const currentSlide = document.querySelector(".current-slide");
 
     const indicatorDots = Array.from(
         document.querySelectorAll(".indicator-dot")
     );
 
-    if (
-        !heroSection ||
-        !carousel ||
-        !track ||
-        !heroTitle ||
-        !heroDescription
-    ) {
+    if (!heroSection || !heroTitle || !heroDescription) {
+        return;
+    }
+
+    const heroCopy = document.querySelector(".hero-copy");
+
+    // Read the initial hero category.
+    const heroDestination = {
+        title: heroTitle.textContent.trim(),
+        description: heroDescription.textContent.trim(),
+        category: heroCopy?.dataset.category || "",
+        background: currentBackground
+            ? getComputedStyle(currentBackground).backgroundImage
+            : "",
+        image: heroCopy?.dataset.image || "",
+        alt: heroCopy?.dataset.imageAlt || heroTitle.textContent.trim(),
+        caption: heroTitle.textContent.trim(),
+    };
+
+    // Update Explore URL for the active category.
+    const exploreBaseUrl = heroExplore?.getAttribute("href");
+
+    function updateExploreLink(category) {
+        if (!heroExplore || !exploreBaseUrl) {
+            return;
+        }
+        const url = new URL(exploreBaseUrl, window.location.origin);
+        if (category) {
+            url.searchParams.set("category", category);
+        } else {
+            url.searchParams.delete("category");
+        }
+        heroExplore.href = `${url.pathname}${url.search}`;
+    }
+
+    // Initialize the first category CTA immediately.
+    updateExploreLink(heroDestination.category);
+
+    if (!carousel || !track) {
         return;
     }
 
@@ -36,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
         track.querySelectorAll(".hero-trip-card")
     );
 
-    if (cards.length < 2) {
+    if (cards.length === 0) {
         return;
     }
 
@@ -46,25 +77,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let isAnimating = false;
     let rotationIndex = 0;
-    let rotationTimer = null;
 
-    /*
-     * A = initial main hero.
-     * The carousel cards supply the remaining destinations.
-     */
-    const heroCopy = document.querySelector(".hero-copy");
-    const heroDestination = {
-        title: heroTitle.textContent.trim(),
-        description: heroDescription.textContent.trim(),
-        url: heroExplore?.getAttribute("href") || "",
-        background: currentBackground
-            ? getComputedStyle(currentBackground).backgroundImage
-            : "",
-        image: heroCopy?.dataset.image || "",
-        alt: heroCopy?.dataset.imageAlt || heroTitle.textContent.trim(),
-        caption: heroTitle.textContent.trim()
-    };
-
+    // Read category card data.
     function readCard(card) {
         const image = card.querySelector("img");
         const caption = card.querySelector(".hero-card-caption");
@@ -72,23 +86,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return {
             title: card.dataset.title || "",
             description: card.dataset.description || "",
-            url: card.dataset.url || "",
+            category: card.dataset.category || "",
             background: card.dataset.background || "",
-            image: image ? image.getAttribute("src") || "" : "",
-            alt: image ? image.alt || "" : "",
-            caption: caption ? caption.textContent.trim() : ""
+            image: image?.getAttribute("src") || "",
+            alt: image?.alt || "",
+            caption: caption?.textContent.trim() || "",
         };
     }
 
-    /*
-     * Keep the existing cyclic sequence:
-     * initial hero + all carousel destinations.
-     */
+    // Initial hero + remaining category slides.
     const destinations = [
         heroDestination,
-        ...cards.map(readCard)
+        ...cards.map(readCard),
     ];
 
+    // Update a reusable carousel card.
     function setCardContent(card, destination) {
         if (!card || !destination) {
             return;
@@ -96,8 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         card.dataset.title = destination.title;
         card.dataset.description = destination.description;
+        card.dataset.category = destination.category;
         card.dataset.background = destination.background;
-        card.dataset.url = destination.url || "";
 
         const image = card.querySelector("img");
         const caption = card.querySelector(".hero-card-caption");
@@ -113,10 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    /*
-     * Keep exactly one card active.
-     * The active card is larger; all other cards are smaller.
-     */
     function updateActiveCard() {
         const visibleCards = Array.from(
             track.querySelectorAll(".hero-trip-card")
@@ -139,6 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
             : `url("${value}")`;
     }
 
+    // Crossfade the hero background.
     function updateBackground(background) {
         if (!background || !currentBackground || !nextBackground) {
             return;
@@ -153,26 +162,17 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        /*
-         * Prepare the next background layer.
-         */
         nextBackground.style.transition = "none";
         nextBackground.style.opacity = "0";
         nextBackground.style.backgroundImage = normalizedBackground;
 
         void nextBackground.offsetHeight;
 
-        /*
-         * Start the background crossfade immediately.
-         */
         nextBackground.style.transition =
             `opacity ${backgroundDuration}ms ease-in-out`;
 
         nextBackground.style.opacity = "1";
 
-        /*
-         * Swap the layer references.
-         */
         const previousBackground = currentBackground;
 
         currentBackground = nextBackground;
@@ -187,6 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nextBackground.style.opacity = "0";
     }
 
+    // Update main hero content and CTA.
     function updateHero(destination) {
         if (!destination) {
             return;
@@ -196,9 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
             heroTitle.textContent !== destination.title ||
             heroDescription.textContent !== destination.description;
 
-        /*
-         * Fade the heading and description during card movement.
-         */
         if (needsUpdate) {
             heroTitle.classList.add("is-changing");
             heroDescription.classList.add("is-changing");
@@ -214,13 +212,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }, 350);
         }
 
-        /*
-         * Start the background transition at the same time.
-         */
         updateBackground(destination.background);
-        if (heroExplore && destination.url) {
-        heroExplore.href = destination.url;
-}
+        updateExploreLink(destination.category);
     }
 
     function updateIndicators() {
@@ -253,9 +246,6 @@ document.addEventListener("DOMContentLoaded", () => {
         carousel.classList.add("is-ready");
     }
 
-    /*
-     * Reset the track without animating its position.
-     */
     function resetTrackPosition() {
         track.style.transition = "none";
         track.style.transform = "translateX(0)";
@@ -263,6 +253,7 @@ document.addEventListener("DOMContentLoaded", () => {
         void track.offsetHeight;
     }
 
+    // Rotate the carousel continuously.
     function rotateCarousel() {
         if (isAnimating) {
             return;
@@ -283,22 +274,14 @@ document.addEventListener("DOMContentLoaded", () => {
             parseFloat(trackStyles.gap) ||
             0;
 
-        /*
-         * Use the layout width, not the visually scaled width.
-         */
         const distance = firstCard.offsetWidth + gap;
 
-        /*
-         * Begin card movement.
-         */
         track.style.transition =
             `transform ${animationDuration}ms ease-in-out`;
 
         track.style.transform = `translateX(-${distance}px)`;
 
-        /*
-         * Update the main hero at the START of movement.
-         */
+        // Update the hero at the beginning of movement.
         const nextRotationIndex =
             (rotationIndex + 1) % destinations.length;
 
@@ -317,9 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 finishSlide
             );
 
-            /*
-             * Advance the cyclic destination index.
-             */
             rotationIndex =
                 (rotationIndex + 1) % destinations.length;
 
@@ -328,27 +308,17 @@ document.addEventListener("DOMContentLoaded", () => {
                 destinations.length
             ];
 
-            /*
-             * Reset the track before changing the DOM order.
-             */
             resetTrackPosition();
 
-            /*
-             * Move the outgoing first card to the end.
-             */
+            // Move the outgoing card to the end.
             track.appendChild(firstCard);
 
-            /*
-             * Apply the new order before restoring the transition.
-             */
             void track.offsetHeight;
 
             track.style.transition =
                 `transform ${animationDuration}ms ease-in-out`;
 
-            /*
-             * Update card content for the new cycle.
-             */
+            // Update the content and category slug of each card.
             const orderedCards = Array.from(
                 track.querySelectorAll(".hero-trip-card")
             );
@@ -365,71 +335,45 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
 
-            /*
-             * The outgoing main hero becomes the final card.
-             */
+            // The outgoing hero becomes the final card.
             const lastCard = track.lastElementChild;
 
             if (lastCard) {
                 setCardContent(lastCard, outgoingHero);
             }
-
-            /*
-             * NEW: make only the first card active.
-             * Its larger size will move forward with each rotation.
-             */
             updateActiveCard();
-
-            /*
-             * Update the carousel title and indicators.
-             * The main hero was already updated at movement start.
-             */
-            if (carouselTitle) {
-                carouselTitle.textContent =
-                    track.firstElementChild?.dataset.title || "";
-            }
-
             updateIndicators();
-
             isAnimating = false;
         }
-
         track.addEventListener(
             "transitionend",
             finishSlide
         );
     }
 
-    /*
-     * Initialize the first active card and indicator state.
-     */
+    // Initialize carousel.
     updateActiveCard();
     updateIndicators();
 
-    /*
-     * Reveal the hero after the page finishes loading.
-     */
+    // Reveal hero after page load.
     if (document.readyState === "complete") {
         requestAnimationFrame(revealHero);
     } else {
         window.addEventListener(
             "load",
-            () => {
-                requestAnimationFrame(revealHero);
-            },
+            () => requestAnimationFrame(revealHero),
             { once: true }
         );
     }
 
-    /*
-     * Preserve automatic carousel rotation.
-     */
-    rotationTimer = window.setInterval(
+    // No rotation needed if there are no additional cards.
+    if (cards.length === 0) {
+        return;
+    }
+
+    // Start automatic rotation.
+    window.setInterval(
         rotateCarousel,
         slideDuration
-    );
-
-    console.log(
-        "Jogi Vibes cyclic hero carousel initialized."
     );
 });

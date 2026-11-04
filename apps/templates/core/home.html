@@ -12,12 +12,16 @@
     <!-- Vertical slide indicator -->
     <div class="hero-indicator-group">
         <div class="brand-carousel-indicator">
-            {% for trip in carousel_slides %}
-            <span class="indicator-line"></span>
-            <span class="indicator-dot {% if forloop.first %}active{% endif %}" data-slide="{{ forloop.counter0 }}">{{ forloop.counter }}</span>
+            {% for category in carousel_slides %}
+                <span class="indicator-line"></span>
+                <span class="indicator-dot {% if forloop.first %}active{% endif %}"
+                      data-slide="{{ forloop.counter0 }}">
+                    {{ forloop.counter }}
+                </span>
             {% endfor %}
             <span class="indicator-line"></span>
         </div>
+
         <div class="hero-slide-number">
             <span class="current-slide">01</span>
             <span>/</span>
@@ -27,27 +31,28 @@
 
    <!-- Initial hero content -->
     <div class="hero-copy"
-        data-image="{{ carousel_slides.0.carousel_image_url }}"
-        data-image-alt="{{ carousel_slides.0.carousel_image_alt }}">
+         data-image="{{ carousel_slides.0.image.url }}"
+         data-image-alt="{{ carousel_slides.0.name }}"
+         data-category="{{ carousel_slides.0.slug }}">
         <h1 class="hero-title">{{ carousel_slides.0.name }}</h1>
         <p class="hero-description">{{ carousel_slides.0.description }}</p>
-        <a class="hero-cta" href="{{ carousel_slides.0.get_absolute_url }}">Explore <span aria-hidden="true">→</span></a>
+        <a class="hero-cta" href="{% url 'trips:list' %}?category={{ carousel_slides.0.slug }}">
+            Explore <span aria-hidden="true">→</span>
+        </a>
     </div>
 
     <!-- Real trip cards -->
-    <div aria-label="Featured trips" class="hero-carousel">
-<!--        <h2 class="hero-carousel-title">{{ carousel_slides.0.name }}</h2>-->
+    <div aria-label="Trip categories" class="hero-carousel">
         <div class="hero-card-track">
-            {% for trip in carousel_slides|slice:"1:" %}
-            <button class="hero-trip-card {% if forloop.first %}active{% endif %}"
-                    data-background="{{ trip.carousel_image_url }}"
-                    data-description="{{ trip.description|escape }}"
-                    data-url="{{ trip.get_absolute_url }}"
-                    data-slide="{{ forloop.counter0 }}" data-title="{{ trip.name|escape }}" type="button"
-                    aria-label="View {{ trip.name|escape }}">
-                <img alt="{{ trip.carousel_image_alt }}" src="{{ trip.carousel_image_url }}">
-                <span class="hero-card-caption">{{ trip.name }}</span>
-            </button>
+            {% for category in carousel_slides|slice:"1:" %}
+                <button
+                    class="hero-trip-card {% if forloop.first %}active{% endif %}"
+                    data-background="{{ category.image.url }}" data-description="{{ category.description|escape }}"
+                    data-title="{{ category.name|escape }}" data-category="{{ category.slug }}" type="button"
+                    aria-label="View {{ category.name|escape }}">
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}">
+                    <span class="hero-card-caption">{{ category.name }}</span>
+                </button>
             {% endfor %}
         </div>
     </div>

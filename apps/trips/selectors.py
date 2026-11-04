@@ -1,6 +1,7 @@
 from django.db.models import Prefetch
 
-from apps.trips.models import Trip, TripImage
+from apps.trips.models.trip import Trip, TripCategory
+from apps.trips.models import TripImage
 from apps.trips.enums import TripStatus
 
 
@@ -21,3 +22,16 @@ def get_homepage_carousel_slides():
         trip.carousel_image_alt = (trip_image.caption or trip.name)
         carousel_slides.append(trip)
     return carousel_slides
+
+
+def get_trip_categories():
+    return (
+        TripCategory.objects
+        .filter(
+            trips__status=TripStatus.PUBLISHED,
+            image__isnull=False,
+        )
+        .exclude(image="")
+        .distinct()
+        .order_by("name")
+    )
