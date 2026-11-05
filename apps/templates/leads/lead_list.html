@@ -1,0 +1,88 @@
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+{% block title %}Leads | Jogi Vibes{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="lead-page">
+    <div class="lead-page-header">
+        <div>
+            <h1>Leads</h1>
+            <p>Manage enquiries and customer follow-ups.</p>
+        </div>
+    </div>
+
+    <form method="get" class="lead-filters">
+        <input type="search" name="q" value="{{ search_query }}" placeholder="Search name, phone or email">
+        <select name="status">
+            <option value="">All statuses</option>
+            {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if selected_status == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="trip">
+            <option value="">All trips</option>
+            {% for trip in trips %}
+                <option value="{{ trip.pk }}"
+                    {% if selected_trip == trip.pk|stringformat:"s" %}selected{% endif %}>
+                    {{ trip.name }}
+                </option>
+            {% endfor %}
+        </select>
+        <input type="month" name="month" value="{{ selected_month }}">
+        <button type="submit">Filter</button>
+        <a href="{% url 'leads:lead_list' %}">Clear</a>
+    </form>
+
+    <div class="lead-table-wrapper">
+        <table class="lead-table">
+            <thead>
+                <tr>
+                    <th>Contact</th>
+                    <th>Trip</th>
+                    <th>Status</th>
+                    <th>Interest</th>
+                    <th>Assigned To</th>
+                    <th>Next Follow-up</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lead in leads %}
+                    <tr>
+                        <td>
+                            <strong>
+                                <a href="{% url 'leads:detail' lead.pk %}">
+                                {{ lead.contact.full_name }
+                                </a>
+                            </strong>
+                            <small>{{ lead.contact.phone_number }}</small>
+                        </td>
+                        <td>{{ lead.trip.name }}</td>
+                        <td>{{ lead.get_status_display }}</td>
+                        <td>{{ lead.get_interest_level_display }}</td>
+                        <td>{{ lead.assigned_to|default:"Unassigned" }}</td>
+                        <td>{{ lead.next_follow_up_date|default:"—" }}</td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6">No leads found.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% if is_paginated %}
+        <div class="lead-pagination">
+            {% if page_obj.has_previous %}
+                <a href="{% querystring page=page_obj.previous_page_number %}">Previous</a>
+            {% endif %}
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+                <a href="{% querystring page=page_obj.next_page_number %}">Next</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

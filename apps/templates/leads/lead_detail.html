@@ -1,0 +1,171 @@
+
+{% extends "layouts/dashboard.html" %}
+{% load static %}
+
+{% block title %}{{ lead.contact.full_name }} | Leads{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
+{% endblock %}
+
+{% block dashboard_content %}
+<div class="lead-detail-page">
+    <!-- Lead header -->
+    <div class="lead-detail-header">
+        <div>
+            <a href="{% url 'leads:lead_list' %}" class="lead-back-link">
+                <i class="ti ti-arrow-left"></i> Back to Leads
+            </a>
+            <h1>{{ lead.contact.full_name }}</h1>
+            <p>{{ lead.trip.name }}</p>
+        </div>
+        <span class="lead-status">
+            {{ lead.get_status_display }}
+        </span>
+    </div>
+    <div class="lead-detail-grid">
+        <!-- Lead information -->
+        <section class="lead-detail-card">
+            <h2>Lead Information</h2>
+            <dl class="lead-info-list">
+                <div>
+                    <dt>Phone</dt>
+                    <dd>{{ lead.contact.phone_number }}</dd>
+                </div>
+                <div>
+                    <dt>Email</dt>
+                    <dd>{{ lead.contact.email|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>City</dt>
+                    <dd>{{ lead.contact.city|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Trip</dt>
+                    <dd>{{ lead.trip.name }}</dd>
+                </div>
+                <div>
+                    <dt>Group Size</dt>
+                    <dd>{{ lead.group_size }}</dd>
+                </div>
+                <div>
+                    <dt>Preferred Departure Month</dt>
+                    <dd>{{ lead.preferred_departure_month|date:"F Y"|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Preferred Departure Date</dt>
+                    <dd>{{ lead.preferred_departure_date|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Interest Level</dt>
+                    <dd>{{ lead.get_interest_level_display }}</dd>
+                </div>
+                <div>
+                    <dt>Assigned To</dt>
+                    <dd>{{ lead.assigned_to|default:"Unassigned" }}</dd>
+                </div>
+                <div>
+                    <dt>Next Follow-up</dt>
+                    <dd>{{ lead.next_follow_up_date|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Next Action</dt>
+                    <dd>{{ lead.next_follow_up_action|default:"—" }}</dd>
+                </div>
+                <div>
+                    <dt>Campaign</dt>
+                    <dd>{{ lead.campaign|default:"—" }}</dd>
+                </div>
+            </dl>
+            <div class="lead-notes">
+                <h3>Notes</h3>
+                <p>{{ lead.notes|default:"No notes available."|linebreaksbr }}</p>
+            </div>
+        </section>
+        <!-- Record new interaction -->
+        <section class="lead-detail-card">
+            <h2>Record New Interaction</h2>
+            <form action="{% url 'leads:interaction-create' lead.pk %}" class="lead-interaction-form" method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% for field in form %}
+                    <div class="lead-form-field">
+                        <label for="{{ field.id_for_label }}">
+                            {{ field.label }}
+                        </label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <small class="lead-form-error">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit">Save Interaction</button>
+            </form>
+        </section>
+        <!-- Interaction history -->
+        <section class="lead-detail-card">
+            <h2>Interaction History</h2>
+            {% for interaction in interactions %}
+                <article class="lead-timeline-item">
+                    <div class="lead-timeline-heading">
+                        <strong>{{ interaction.get_interaction_type_display }}</strong>
+                        <small>{{ interaction.interaction_date|date:"d M Y, h:i A" }}</small>
+                    </div>
+                    <p>{{ interaction.summary }}</p>
+                    <dl class="lead-history-meta">
+                        <div>
+                            <dt>Channel</dt>
+                            <dd>{{ interaction.get_channel_display }}</dd>
+                        </div>
+                        <div>
+                            <dt>Result</dt>
+                            <dd>{{ interaction.get_contact_result_display }}</dd>
+                        </div>
+                        <div>
+                            <dt>Recorded by</dt>
+                            <dd>{{ interaction.created_by|default:"—" }}</dd>
+                        </div>
+                    </dl>
+                    {% if interaction.objection %}
+                        <p><strong>Objection:</strong> {{ interaction.objection }}</p>
+                    {% endif %}
+                    {% if interaction.next_action %}
+                        <p><strong>Next action:</strong> {{ interaction.next_action }}</p>
+                    {% endif %}
+                    {% if interaction.next_follow_up_date %}
+                        <p>
+                            <strong>Follow-up:</strong>
+                            {{ interaction.next_follow_up_date }}
+                        </p>
+                    {% endif %}
+                </article>
+            {% empty %}
+                <p class="lead-empty-message">No interactions recorded yet.</p>
+            {% endfor %}
+        </section>
+        <!-- Status history -->
+        <section class="lead-detail-card">
+            <h2>Status History</h2>
+            {% for history in status_history %}
+                <article class="lead-status-history-item">
+                    <strong>
+                        {{ history.get_previous_status_display }}
+                        &rarr;
+                        {{ history.get_new_status_display }}
+                    </strong>
+                    <small>{{ history.changed_at|date:"d M Y, h:i A" }}</small>
+                    {% if history.reason %}
+                        <p>{{ history.reason }}</p>
+                    {% endif %}
+                    <small>
+                        Changed by: {{ history.changed_by|default:"—" }}
+                    </small>
+                </article>
+            {% empty %}
+                <p class="lead-empty-message">No status changes recorded.</p>
+            {% endfor %}
+        </section>
+    </div>
+</div>
+{% endblock %}
