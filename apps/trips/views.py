@@ -9,6 +9,7 @@ from django.views.generic import (
 )
 from django.db.models import Prefetch
 from apps.trips.models import Trip
+from apps.trips.enums import TripStatus
 from apps.trips.models.trip_image import TripImage
 from apps.core.mixins import PermissionRequiredMixin
 # Create your views here.
@@ -21,7 +22,9 @@ class TripListView(ListView):
 
     def get_queryset(self):
         return (
-            Trip.objects.prefetch_related(
+            Trip.objects.filter(
+                status=TripStatus.PUBLISHED,
+            ).prefetch_related(
                 Prefetch(
                     "images",
                     queryset=TripImage.objects.filter(is_cover=True),
