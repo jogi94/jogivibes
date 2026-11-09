@@ -1,13 +1,15 @@
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.db import models
 from apps.core.models import TimeStampedModel
 from .utils import normalize_phone_number
 from django.db import models
 from django.db.models import Q
-
+from django.utils.text import slugify
 from apps.core.models import TrackedModel
-from apps.leads.enums import (LeadInterestLevel, LeadStatus, ContactResult, InteractionChannel, InteractionType)
+from apps.leads.enums import (
+    LeadInterestLevel, LeadStatus, ContactResult, InteractionChannel,
+    InteractionType, AcquisitionSource, CampaignStatus)
+
 
 # Create your models here.
 
@@ -31,6 +33,8 @@ class Lead(TrackedModel):
     trip = models.ForeignKey("trips.Trip", on_delete=models.PROTECT, related_name="leads")
     campaign = models.ForeignKey("leads.Campaign", on_delete=models.SET_NULL, null=True, blank=True,
                                  related_name="leads")
+    source = models.CharField(max_length=20, choices=AcquisitionSource.choices, default=AcquisitionSource.OTHER,
+                              db_index=True)
     group_size = models.PositiveIntegerField(default=1)
     preferred_departure_month = models.DateField(null=True, blank=True,
                                                  help_text="Store the first day of the preferred month.")
@@ -62,12 +66,6 @@ class Lead(TrackedModel):
 
     def __str__(self):
         return f"{self.contact.full_name} - {self.trip.name}"
-
-
-
-from django.utils.text import slugify
-
-from apps.leads.enums import AcquisitionSource, CampaignStatus
 
 
 class Campaign(TrackedModel):
