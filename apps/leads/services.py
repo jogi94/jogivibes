@@ -1,10 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import transaction
-from apps.leads.enums import LeadStatus, CampaignStatus
+from apps.leads.enums import LeadStatus, CampaignStatus, AcquisitionSource, LeadInterestLevel
 from apps.leads.models import Lead, LeadStatusHistory, LeadInteraction, Contact, Campaign
 from apps.leads.permissions import is_crm_admin, get_accessible_lead
 from django.core.exceptions import PermissionDenied
 from django.utils.text import slugify
+from apps.leads.utils import normalize_phone_number
 
 
 @transaction.atomic
@@ -296,3 +297,40 @@ def archive_campaign(*, user, campaign_id):
     campaign.modified_by = user
     campaign.save(update_fields=["status", "modified_by", "modified"])
     return campaign
+
+
+@transaction.atomic
+def create_public_enquiry(*, full_name, phone_number, trip, group_size=1,
+    email="", city="", preferred_departure_month=None, message=""):
+    """
+    Create a public website enquiry and its associated lead.
+    No customer authentication is required.
+    """
+    normalized_phone = normalize_phone_number(phone_number)
+    contact, created = Contact.objects.get_or_create(
+        phone_number=normalized_phone,
+        defaults={
+            "full_name": full_name,
+            "email": email,
+            "city": city,
+        },
+    )
+    # Refresh existing contact details when new information is supplied.
+    if not created:
+        contact.full_name = full_name
+        if email:
+            contact.email = email
+        if city:
+            contact.city = city
+        contact.save()
+    lead = Lead.objects.create(
+        contact=contact,
+        trip=trip,
+        group_size=group_size,
+        source=AcquisitionSource.WEBSITE,
+        status=LeadStatus.NEW,
+        interest_level=LeadInterestLevel.WARM,
+        preferred_departure_month=preferred_departure_month,
+        notes=message,
+    )
+    return lead

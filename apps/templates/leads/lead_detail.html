@@ -46,6 +46,10 @@
                     <dd>{{ lead.trip.name }}</dd>
                 </div>
                 <div>
+                    <dt>Source</dt>
+                    <dd>{{ lead.source }}</dd>
+                </div>
+                <div>
                     <dt>Group Size</dt>
                     <dd>{{ lead.group_size }}</dd>
                 </div>
@@ -83,13 +87,34 @@
                 <p>{{ lead.notes|default:"No notes available."|linebreaksbr }}</p>
             </div>
         </section>
+        <!-- Update lead status -->
+        <section class="lead-detail-card">
+            <h2>Update Lead Status</h2>
+
+            <form action="{% url 'leads:status-update' lead.pk %}" class="lead-status-form" method="post">
+                {% csrf_token %}
+                {{ status_form.non_field_errors }}
+                {% for field in status_form %}
+                <div class="lead-form-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    {% for error in field.errors %}
+                    <small class="lead-form-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+                <button type="submit">Update Status</button>
+            </form>
+        </section>
         <!-- Record new interaction -->
         <section class="lead-detail-card">
             <h2>Record New Interaction</h2>
             <form action="{% url 'leads:interaction-create' lead.pk %}" class="lead-interaction-form" method="post">
                 {% csrf_token %}
-                {{ form.non_field_errors }}
-                {% for field in form %}
+                {{ interaction_form.non_field_errors }}
+                {% for field in interaction_form %}
                     <div class="lead-form-field">
                         <label for="{{ field.id_for_label }}">
                             {{ field.label }}

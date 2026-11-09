@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Trip Enquiry{% endblock %}
+
+{% block styles %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
+{% endblock %}
+
+{% block content %}
+<section class="public-enquiry-page">
+    <div class="public-enquiry-container">
+        <header class="public-enquiry-header">
+            <span class="enquiry-eyebrow">JOGI VIBES · HIMALAYAN ADVENTURES</span>
+            <h1>Let's Plan Your Next Adventure</h1>
+            <p>
+                Tell us a little about your travel plans.
+                Our team will get in touch with you shortly.
+            </p>
+        </header>
+        <form method="post" action="{% url 'leads:enquiry' %}" class="public-enquiry-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="lead-form-field">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                        {% if field.field.required %}*{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <small class="lead-form-error">{{ error }}</small>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+            <button type="submit">
+                Submit Enquiry
+                <i class="ti ti-arrow-right"></i>
+            </button>
+            <p class="enquiry-privacy-note">
+                Your information will only be used to respond to your enquiry.
+            </p>
+        </form>
+    </div>
+</section>
+{% endblock %}

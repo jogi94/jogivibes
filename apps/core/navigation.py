@@ -68,6 +68,7 @@ def get_navigation():
             {"label": "Safety", "url": "/#safety"},
             {"label": "FAQ", "url": "/#faq"},
             {"label": "Contact", "url": "/#contact"},
+            {"label": "Dashbaord", "url": "/dashboard"},
         ],
         "cta": {
             "label": "WhatsApp",

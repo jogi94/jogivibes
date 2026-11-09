@@ -390,3 +390,119 @@
     color: #dc2626;
     font-size: 12px;
 }
+
+/* Public enquiry page */
+
+.public-enquiry-page {
+    min-height: 75vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.public-enquiry-container {
+    width: 100%;
+    max-width: 680px;
+    padding: 36px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.08);
+}
+
+.public-enquiry-header {
+    margin-bottom: 30px;
+}
+
+.enquiry-eyebrow {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.public-enquiry-header h1 {
+    margin: 12px 0;
+    color: #1e293b;
+    font-size: 30px;
+}
+
+.public-enquiry-header p {
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.public-enquiry-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.public-enquiry-form button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 20px;
+    border: none;
+    border-radius: 7px;
+    background: #2563eb;
+    color: #fff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.public-enquiry-form button:hover {
+    background: #1d4ed8;
+}
+
+.enquiry-privacy-note {
+    color: #94a3b8;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .public-enquiry-container {
+        padding: 24px 18px;
+    }
+
+    .public-enquiry-header h1 {
+        font-size: 24px;
+    }
+}
+
+.enquiry-success {
+    text-align: center;
+}
+
+.enquiry-success-icon {
+    margin-bottom: 20px;
+    color: #16a34a;
+    font-size: 56px;
+}
+
+.enquiry-success h1 {
+    color: #1e293b;
+    font-size: 28px;
+}
+
+.enquiry-success p {
+    max-width: 460px;
+    margin: 14px auto 24px;
+    color: #64748b;
+    line-height: 1.7;
+}
+
+.enquiry-home-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 7px;
+    background: #2563eb;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+}

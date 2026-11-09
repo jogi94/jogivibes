@@ -326,6 +326,41 @@ body {
     color: #FFFFFF;
 }
 
+/* Light navigation for pages with white backgrounds */
+
+.site-header--light {
+    position: relative;
+    background: #FFFFFF;
+    border-bottom: 1px solid #E5E7EB;
+}
+
+.site-header--light .site-navbar {
+    color: #18201E;
+}
+
+.site-header--light .site-navbar__brand {
+    color: #18201E;
+}
+
+.site-header--light .desktop-navigation__item > a,
+.site-header--light .desktop-navigation__trigger {
+    color: #18201E;
+}
+
+.site-header--light .desktop-navigation__item > a:hover,
+.site-header--light .desktop-navigation__trigger:hover {
+    color: #2563EB;
+}
+
+.site-header--light .search-btn {
+    color: #18201E;
+    border-color: #D1D5DB;
+}
+
+.site-header--light .mobile-menu-trigger {
+    color: #18201E;
+}
+
 /* =========================================================
    Responsive
    ========================================================= */
@@ -351,3 +386,4 @@ body {
         display: block;
     }
 }
+

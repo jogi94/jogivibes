@@ -45,6 +45,7 @@
                     <th>Contact</th>
                     <th>Trip</th>
                     <th>Status</th>
+                    <th>Source</th>
                     <th>Interest</th>
                     <th>Assigned To</th>
                     <th>Next Follow-up</th>
@@ -55,14 +56,15 @@
                     <tr>
                         <td>
                             <strong>
-                                <a href="{% url 'leads:detail' lead.pk %}">
-                                {{ lead.contact.full_name }
+                                <a href="{% url 'leads:lead_detail' lead.pk %}">
+                                {{ lead.contact.full_name }}
                                 </a>
                             </strong>
                             <small>{{ lead.contact.phone_number }}</small>
                         </td>
                         <td>{{ lead.trip.name }}</td>
                         <td>{{ lead.get_status_display }}</td>
+                        <td>{{ lead.source }}</td>
                         <td>{{ lead.get_interest_level_display }}</td>
                         <td>{{ lead.assigned_to|default:"Unassigned" }}</td>
                         <td>{{ lead.next_follow_up_date|default:"—" }}</td>
