@@ -1,0 +1,22 @@
+.travel-background {
+    --travel-overlay-top: rgb(10 25 23 / 48%);
+    --travel-overlay-bottom: rgb(10 25 23 / 34%);
+
+    box-sizing: border-box;
+    min-block-size: 100vh;
+    min-block-size: 100svh;
+
+    background-color: #213d37;
+    background-image:
+        linear-gradient(var(--travel-overlay-top), var(--travel-overlay-bottom)),
+        var(--travel-background-image, none);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center, 50% center;
+}
+
+@media (max-width: 600px) {
+    .travel-background {
+        background-position: center, 38% center;
+    }
+}

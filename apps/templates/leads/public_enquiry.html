@@ -1,15 +1,16 @@
-{% extends "base.html" %}
 {% load static %}
-
-{% block title %}Trip Enquiry{% endblock %}
-
-{% block styles %}
-    {{ block.super }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
     <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
-{% endblock %}
-
-{% block content %}
-<section class="public-enquiry-page">
+    <link rel="stylesheet" href="{% static 'core/css/travel-background.css' %}">
+</head>
+<body>
+{% static 'images/enquiry_Successful_background.png' as enquiry_background_url %}
+<section class="public-enquiry-page travel-background"
+         style="--travel-background-image: url('{{ enquiry_background_url }}');">
     <div class="public-enquiry-container">
         <header class="public-enquiry-header">
             <span class="enquiry-eyebrow">JOGI VIBES · HIMALAYAN ADVENTURES</span>
@@ -19,10 +20,13 @@
                 Our team will get in touch with you shortly.
             </p>
         </header>
-        <form method="post" action="{% url 'leads:enquiry' %}" class="public-enquiry-form">
+        <form method="post" action="{% url 'leads:leads_enquiry' %}" class="public-enquiry-form">
             {% csrf_token %}
             {{ form.non_field_errors }}
             {% for field in form %}
+                {% if field.is_hidden %}
+                    {{ field }}
+                {% else %}
                 <div class="lead-form-field">
                     <label for="{{ field.id_for_label }}">
                         {{ field.label }}
@@ -36,6 +40,7 @@
                         <small class="lead-form-error">{{ error }}</small>
                     {% endfor %}
                 </div>
+                {% endif %}
             {% endfor %}
             <button type="submit">
                 Submit Enquiry
@@ -47,4 +52,6 @@
         </form>
     </div>
 </section>
-{% endblock %}
+
+</body>
+</html>

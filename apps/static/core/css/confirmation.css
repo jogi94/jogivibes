@@ -1,0 +1,121 @@
+/* Page background and layout */
+.confirmation-body {
+    margin: 0;
+    background-color: #213d37;
+    background-image:
+        linear-gradient(rgb(10 25 23 / 70%), rgb(10 25 23 / 35%)),
+        var(--confirmation-background, none);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+.confirmation-page {
+    box-sizing: border-box;
+    display: grid;
+    grid-template-columns: minmax(0, 34rem);
+    min-block-size: 100vh;
+    min-block-size: 100svh;
+    padding: clamp(1rem, 5vw, 3rem);
+    place-content: center;
+    justify-items: center;
+    gap: 1.5rem;
+    font-family: system-ui, sans-serif;
+}
+
+@media (max-width: 600px) {
+    .confirmation-body {
+        background-position: center, 38% center;
+    }
+}
+
+/* Jogi Vibes brand */
+.confirmation-brand {
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 2px 8px rgb(0 0 0 / 60%);
+}
+
+.confirmation-brand__name {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.confirmation-brand__tagline {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+/* Reusable confirmation card */
+.confirmation-card {
+    --card-accent: #9a431d;
+    --card-icon-color: #256044;
+    --card-icon-background: #e9f5ed;
+
+    box-sizing: border-box;
+    display: grid;
+    justify-items: center;
+    gap: 1rem;
+    inline-size: 100%;
+    padding: clamp(1.5rem, 6vw, 3.5rem);
+    border: 1px solid #e9e0d4;
+    border-radius: 1.5rem;
+    background: #fff;
+    color: #222821;
+    text-align: center;
+    box-shadow: 0 16px 40px rgb(10 25 23 / 20%);
+}
+
+.confirmation-card__icon {
+    display: grid;
+    inline-size: 3.75rem;
+    aspect-ratio: 1;
+    place-items: center;
+    border-radius: 50%;
+    background: var(--card-icon-background);
+    color: var(--card-icon-color);
+}
+
+.confirmation-card__title {
+    margin: 0;
+    font-size: clamp(1.75rem, 5vw, 2.5rem);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    text-wrap: balance;
+}
+
+.confirmation-card__message {
+    max-inline-size: 36ch;
+    margin: 0;
+    color: #515950;
+    line-height: 1.65;
+}
+
+.confirmation-card__actions {
+    margin-block-start: 0.5rem;
+}
+
+.confirmation-card__link {
+    display: inline-flex;
+    align-items: center;
+    min-block-size: 2.75rem;
+    padding-inline: 1.25rem;
+    border: 1px solid currentColor;
+    border-radius: 0.65rem;
+    color: var(--card-accent);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.confirmation-card__link:hover {
+    background: var(--card-accent);
+    color: #fff;
+}
+
+.confirmation-card__link:focus-visible {
+    outline: 2px solid var(--card-accent);
+    outline-offset: 4px;
+}

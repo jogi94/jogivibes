@@ -130,7 +130,10 @@ class PublicEnquiryView(FormView):
     success_url = reverse_lazy("leads:enquiry-success")
 
     def form_valid(self, form):
-        create_public_enquiry(**form.cleaned_data)
+        # A filled honeypot is treated as accepted but is never sent to CRM.
+        if not form.cleaned_data.get("website"):
+            form.cleaned_data.pop("website", None)
+            create_public_enquiry(**form.cleaned_data)
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):

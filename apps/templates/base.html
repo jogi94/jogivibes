@@ -23,8 +23,9 @@
         </div>
         <div class="hero-background hero-background-next" aria-hidden="true"></div>
 
-        <!-- Public navigation -->
-        {% include "components/navigation/navbar.html" %}
+        {% if not public_enquiry_only %}
+            {% include "components/navigation/navbar.html" %}
+        {% endif %}
 
         <!-- Public page content -->
         <main id="main-content">

@@ -91,7 +91,7 @@
         <section class="lead-detail-card">
             <h2>Update Lead Status</h2>
 
-            <form action="{% url 'leads:status-update' lead.pk %}" class="lead-status-form" method="post">
+            <form action="{% url 'leads:status_update' lead.pk %}" class="lead-status-form" method="post">
                 {% csrf_token %}
                 {{ status_form.non_field_errors }}
                 {% for field in status_form %}
@@ -111,7 +111,7 @@
         <!-- Record new interaction -->
         <section class="lead-detail-card">
             <h2>Record New Interaction</h2>
-            <form action="{% url 'leads:interaction-create' lead.pk %}" class="lead-interaction-form" method="post">
+            <form action="{% url 'leads:interaction_create' lead.pk %}" class="lead-interaction-form" method="post">
                 {% csrf_token %}
                 {{ interaction_form.non_field_errors }}
                 {% for field in interaction_form %}
