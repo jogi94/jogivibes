@@ -1,29 +1,75 @@
-{% extends "base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Jogi Vibes | Dashboard</title>
+    <link rel="stylesheet" href="{% static 'core/css/login.css' %}">
+</head>
+<body>
+<section class="login-page">
+    <div class="login-card">
+        <aside class="login-story" aria-label="Jogi Vibes team access">
+            <div class="login-scene" aria-hidden="true">
+                <svg class="login-mountains" viewBox="0 0 490 570" preserveAspectRatio="none">
+                    <defs>
+                        <pattern id="mountain-dots-far" width="9" height="9" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1.05" fill="#d8e5d2" />
+                        </pattern>
+                        <pattern id="mountain-dots-near" width="7" height="7" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1.15" fill="#e5ead7" />
+                        </pattern>
+                    </defs>
+                    <path d="M0 331 48 269 79 294 157 166 185 208 236 123 281 204 322 177 393 271 423 238 490 300V570H0Z" fill="url(#mountain-dots-far)" opacity=".62" />
+                    <path d="M0 405 59 344 95 369 158 270 190 302 247 217 287 275 327 258 383 342 422 312 490 359V570H0Z" fill="url(#mountain-dots-near)" opacity=".68" />
+                    <path d="m48 269 31 25 78-128 28 42 51-85 45 81m41-27 71 94 30-33 67 62" fill="none" stroke="#e5ead7" stroke-opacity=".42" stroke-width="1.2" stroke-dasharray="1 5" />
+                    <path d="m59 344 36 25 63-99 32 32 57-85 40 58 40-17 56 84 39-30 68 47" fill="none" stroke="#e5ead7" stroke-opacity=".34" stroke-width="1.2" stroke-dasharray="1 5" />
+                </svg>
+                <span class="login-trekker">
+                    <span class="trekker-figure">
+                        <i class="trekker-head"></i><i class="trekker-pack"></i>
+                        <i class="trekker-body"></i><i class="trekker-leg trekker-leg--front"></i>
+                        <i class="trekker-leg trekker-leg--back"></i>
+                    </span>
+                </span>
+            </div>
+            <a class="login-brand" href="/" aria-label="Jogi Vibes home">
+                <span class="login-brand-title">JOGI VIBES</span>
+            </a>
+            <span class="login-story-kicker">BEHIND EVERY GREAT JOURNEY</span>
+            <div class="login-story-copy">
+                <p>Good journeys begin with a team that’s ready.</p>
+            </div>
+            <span class="login-story-caption"><span></span> TEAM PORTAL · PRIVATE ACCESS</span>
+        </aside>
 
-{% block title %}CRM Sign In{% endblock %}
-
-{% block content %}
-<section class="public-enquiry-page">
-    <div class="public-enquiry-container">
-        <header class="public-enquiry-header">
-            <span class="enquiry-eyebrow">JOGI VIBES · TEAM ACCESS</span>
-            <h1>Sign in to the CRM</h1>
-        </header>
-        <form method="post" class="public-enquiry-form">
-            {% csrf_token %}
-            {{ form.non_field_errors }}
-            {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
-            {% for field in form %}
-                <div class="lead-form-field">
-                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                    {{ field }}
-                    {% for error in field.errors %}
-                        <small class="lead-form-error">{{ error }}</small>
-                    {% endfor %}
-                </div>
-            {% endfor %}
-            <button type="submit">Sign in</button>
-        </form>
+        <div class="login-panel">
+            <header class="login-header">
+<!--                <span class="login-eyebrow">-->
+<!--                    <h1><span>JOGI VIBES</span></h1><span class="">TEAM ACCESS</span>-->
+<!--                </span>-->
+<!--                <h1>Welcome back<span>.</span></h1>-->
+                <h1><span class="login-travel-tagline">HILLS <i>·</i> BEACHES <i>·</i> TRAVEL</span></h1>
+                <p>Sign in to manage the journeys behind the scenes.</p>
+            </header>
+            <form method="post" class="login-form">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
+                {% for field in form %}
+                    <div class="login-field">
+                        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% for error in field.errors %}
+                            <small class="login-error">{{ error }}</small>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <button type="submit">Sign in <span aria-hidden="true">↗</span></button>
+            </form>
+            <p class="login-footnote"><span aria-hidden="true">▣</span> Secure access for the Jogi Vibes team</p>
+        </div>
     </div>
 </section>
-{% endblock %}
+</body>
+</html>
