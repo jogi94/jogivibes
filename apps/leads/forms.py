@@ -1,6 +1,5 @@
 
 from django import forms
-from datetime import date, datetime
 from apps.leads.enums import (
     ContactResult,
     InteractionChannel,
@@ -53,16 +52,14 @@ class PublicEnquiryForm(forms.Form):
         }))
     trip = forms.ModelChoiceField(queryset=Trip.objects.none(), label="Interested Trip")
     group_size = forms.IntegerField(min_value=1, initial=1, label="Number of Travelers")
-    # preferred_departure_month = forms.DateField(required=False, label="Preferred Departure Month",
-    #     input_formats=["%Y-%m"],
-    #     widget=forms.DateInput(attrs={
-    #         "type": "month",
-    #     }))
     preferred_departure_month = forms.DateField(
         required=False,
         label="Preferred Departure Month",
         input_formats=["%Y-%m"],
-        widget=forms.Select(),
+        widget=forms.DateInput(
+            attrs={"type": "month"},
+            format="%Y-%m",
+        ),
     )
     message = forms.CharField(required=False, label="Additional Requirements",
         widget=forms.Textarea(attrs={
@@ -80,29 +77,40 @@ class PublicEnquiryForm(forms.Form):
         self.fields["trip"].queryset = Trip.objects.filter(
             status=TripStatus.PUBLISHED
         )
-        today = date.today()
-        start = today.year * 12 + today.month - 1
-        choices = [("", "Select a month (optional)")]
-
-        for offset in range(24):
-            year, month_index = divmod(start + offset, 12)
-            month = date(year, month_index + 1, 1)
-            choices.append((month.strftime("%Y-%m"), month.strftime("%B %Y")))
-
-        field_name = "preferred_departure_month"
-        initial_month = self.get_initial_for_field(self.fields[field_name], field_name)
-        if isinstance(initial_month, (date, datetime)):
-            self.initial[field_name] = initial_month.strftime("%Y-%m")
-            if self.initial[field_name] not in dict(choices):
-                choices.append((self.initial[field_name], initial_month.strftime("%B %Y")))
-
-        self.fields[field_name].widget.choices = choices
 
     def clean_phone_number(self):
         try:
             return normalize_phone_number(self.cleaned_data["phone_number"])
         except ValidationError as error:
             raise forms.ValidationError(error.messages)
+
+
+class LeadPhoneVerificationForm(forms.Form):
+    verification_code = forms.CharField(
+        required=False,
+        max_length=10,
+        label="Verification code",
+        widget=forms.TextInput(attrs={
+            "placeholder": "Enter the code sent by SMS",
+            "inputmode": "numeric",
+            "autocomplete": "one-time-code",
+        }),
+    )
+
+
+class EnquiryPhoneUpdateForm(forms.Form):
+    phone_number = forms.CharField(
+        max_length=16,
+        label="Enquirer mobile number",
+        widget=forms.TextInput(attrs={"type": "tel", "placeholder": "Enter the correct mobile number"}),
+    )
+
+    def clean_phone_number(self):
+        try:
+            return normalize_phone_number(self.cleaned_data["phone_number"])
+        except ValidationError as error:
+            raise forms.ValidationError(error.messages)
+
 
 
 

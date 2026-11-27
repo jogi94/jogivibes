@@ -2,7 +2,7 @@ from django.conf import settings
 from django.core.exceptions import ValidationError
 from apps.core.models import TimeStampedModel
 from .utils import normalize_phone_number
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.utils.text import slugify
 from apps.core.models import TrackedModel
@@ -25,7 +25,15 @@ class Contact(TimeStampedModel):
 
     def save(self, *args, **kwargs):
         self.phone_number = normalize_phone_number(self.phone_number)
-        super().save(*args, **kwargs)
+        with transaction.atomic():
+            previous_phone = None
+            if self.pk:
+                previous_phone = type(self).objects.filter(pk=self.pk).values_list(
+                    "phone_number", flat=True
+                ).first()
+            super().save(*args, **kwargs)
+            if previous_phone and previous_phone != self.phone_number:
+                self.leads.update(phone_verified=False, verified_phone_number="")
 
 
 class Lead(TrackedModel):
@@ -36,6 +44,8 @@ class Lead(TrackedModel):
     source = models.CharField(max_length=20, choices=AcquisitionSource.choices, default=AcquisitionSource.OTHER,
                               db_index=True)
     group_size = models.PositiveIntegerField(default=1)
+    phone_verified = models.BooleanField(default=False, db_index=True, editable=False)
+    verified_phone_number = models.CharField(max_length=16, blank=True, editable=False)
     preferred_departure_month = models.DateField(null=True, blank=True,
                                                  help_text="Store the first day of the preferred month.")
     preferred_schedule = models.ForeignKey("bookings.TripSchedule", on_delete=models.SET_NULL, null=True,
@@ -66,6 +76,57 @@ class Lead(TrackedModel):
 
     def __str__(self):
         return f"{self.contact.full_name} - {self.trip.name}"
+
+    def save(self, *args, **kwargs):
+        reset_verification = False
+        if self.phone_verified:
+            contact_phone = getattr(self.contact, "phone_number", None)
+            if contact_phone is None and self.contact_id:
+                contact_phone = Contact.objects.filter(pk=self.contact_id).values_list(
+                    "phone_number", flat=True
+                ).first()
+            if not contact_phone or self.verified_phone_number != contact_phone:
+                self.phone_verified = False
+                self.verified_phone_number = ""
+                reset_verification = True
+        if reset_verification and kwargs.get("update_fields") is not None:
+            kwargs["update_fields"] = set(kwargs["update_fields"]) | {
+                "phone_verified",
+                "verified_phone_number",
+            }
+        super().save(*args, **kwargs)
+
+
+class LeadPhoneOTP(models.Model):
+    """Short-lived OTP challenge issued by staff for an enquiry phone number."""
+
+    phone_number = models.CharField(max_length=16, db_index=True)
+    verification_sid = models.CharField(max_length=34)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="lead_phone_otps",
+    )
+    lead = models.ForeignKey(
+        "leads.Lead",
+        on_delete=models.CASCADE,
+        related_name="phone_otp_challenges",
+        null=True,
+        blank=True,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField(db_index=True)
+    attempt_count = models.PositiveSmallIntegerField(default=0)
+    consumed_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-created"]
+        indexes = [
+            models.Index(
+                fields=["created_by", "phone_number", "-created"],
+                name="lead_phone_otp_staff_phone_idx",
+            ),
+        ]
 
 
 class Campaign(TrackedModel):

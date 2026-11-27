@@ -1,0 +1,36 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Verify Enquirer Mobile | Jogi Vibes</title>
+    <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/travel-background.css' %}">
+</head>
+<body>
+<section class="public-enquiry-page travel-background">
+    <div class="public-enquiry-container">
+        <header class="public-enquiry-header">
+            <span class="enquiry-eyebrow">JOGI VIBES · PHONE CHECK</span>
+            <h1>Verify the enquirer’s mobile</h1>
+            <p>We sent a one-time code to <strong>{{ lead.contact.phone_number }}</strong>. Ask the enquirer to share it with you.</p>
+        </header>
+
+        {% if otp_message %}<p class="enquiry-otp-status">{{ otp_message }}</p>{% endif %}
+        <form method="post" class="public-enquiry-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="lead-form-field">
+                <label for="{{ form.verification_code.id_for_label }}">{{ form.verification_code.label }}</label>
+                {{ form.verification_code }}
+                {% for error in form.verification_code.errors %}<small class="lead-form-error">{{ error }}</small>{% endfor %}
+            </div>
+            <button type="submit" name="action" value="verify">Verify &amp; Finish</button>
+            <button type="submit" name="action" value="resend" class="enquiry-send-otp">Send a new code</button>
+        </form>
+        <a class="enquiry-phone-edit" href="{% url 'leads:enquiry_edit_phone' lead.pk %}">Wrong number? Edit the mobile number</a>
+    </div>
+</section>
+</body>
+</html>

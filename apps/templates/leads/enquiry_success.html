@@ -31,8 +31,8 @@
             </h1>
 
             <p class="confirmation-card__message">
-                We’ve received your trip enquiry. Our team will contact you
-                soon to discuss your adventure.
+                We’ve received this trip enquiry. The enquirer’s phone number is
+                {% if phone_verified %}verified{% else %}not verified yet{% endif %}.
             </p>
             <div class="confirmation-card__actions">
                 <a class="confirmation-card__link" href="{% url 'leads:leads_enquiry' %}">New Enquiry</a>

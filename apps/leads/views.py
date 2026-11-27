@@ -1,14 +1,29 @@
 from datetime import date
 from django.db.models import Q
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, FormView, TemplateView
 from apps.trips.models import Trip
-from apps.leads.models import Lead
+from apps.leads.models import Lead, Contact
 from apps.leads.permissions import get_accessible_leads, get_accessible_lead
 from django.core.exceptions import ValidationError
 from django.urls import reverse, reverse_lazy
-from apps.leads.forms import LeadInteractionForm, PublicEnquiryForm, LeadStatusForm
-from apps.leads.services import record_lead_interaction, create_public_enquiry, change_lead_status
+from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
+from apps.leads.forms import (
+    LeadInteractionForm,
+    PublicEnquiryForm,
+    LeadStatusForm,
+    LeadPhoneVerificationForm,
+    EnquiryPhoneUpdateForm,
+)
+from apps.leads.services import (
+    record_lead_interaction,
+    create_public_enquiry,
+    change_lead_status,
+    send_lead_phone_otp,
+    verify_lead_phone_otp,
+)
+from django.core.exceptions import ImproperlyConfigured
 
 
 
@@ -124,22 +139,129 @@ class LeadInteractionCreateView(LoginRequiredMixin, FormView):
 
 
 
-class PublicEnquiryView(FormView):
+class PublicEnquiryView(LoginRequiredMixin, UserPassesTestMixin, FormView):
     template_name = "leads/public_enquiry.html"
     form_class = PublicEnquiryForm
-    success_url = reverse_lazy("leads:enquiry-success")
+    success_url = reverse_lazy("leads:enquiry_success")
+
+    def test_func(self):
+        return self.request.user.is_staff
 
     def form_valid(self, form):
-        # A filled honeypot is treated as accepted but is never sent to CRM.
         if not form.cleaned_data.get("website"):
             form.cleaned_data.pop("website", None)
-            create_public_enquiry(**form.cleaned_data)
+            lead = create_public_enquiry(
+                user=self.request.user,
+                **form.cleaned_data,
+            )
+            try:
+                send_lead_phone_otp(
+                    user=self.request.user,
+                    lead=lead,
+                    phone_number=lead.contact.phone_number,
+                )
+            except (ValidationError, ImproperlyConfigured):
+                self.request.session["lead_otp_message"] = (
+                    "The lead was saved as unverified, but we could not send an OTP. Use Resend code to try again."
+                )
+            return redirect("leads:enquiry_verify", pk=lead.pk)
         return super().form_valid(form)
+
+
+class EnquiryPhoneVerificationView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = "leads/enquiry_verify_phone.html"
+    form_class = LeadPhoneVerificationForm
+
+    def test_func(self):
+        self.lead = get_object_or_404(
+            Lead.objects.select_related("contact"),
+            pk=self.kwargs["pk"],
+            created_by=self.request.user,
+        )
+        return self.request.user.is_staff and not self.lead.phone_verified
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["light_navigation"] = True
+        context["lead"] = self.lead
+        context["otp_message"] = self.request.session.pop("lead_otp_message", "")
         return context
+
+    def form_valid(self, form):
+        if self.request.POST.get("action") == "resend":
+            try:
+                send_lead_phone_otp(
+                    user=self.request.user,
+                    lead=self.lead,
+                    phone_number=self.lead.contact.phone_number,
+                )
+                self.request.session["lead_otp_message"] = "A new code was sent to the enquirer’s mobile."
+            except (ValidationError, ImproperlyConfigured):
+                self.request.session["lead_otp_message"] = "We could not send a new code. Check the SMS setup and try again."
+            return redirect("leads:enquiry_verify", pk=self.lead.pk)
+
+        code = form.cleaned_data["verification_code"].strip()
+        if not code:
+            form.add_error("verification_code", "Enter the code shared by the enquirer.")
+            return self.form_invalid(form)
+        try:
+            valid = verify_lead_phone_otp(
+                user=self.request.user,
+                lead=self.lead,
+                phone_number=self.lead.contact.phone_number,
+                code=code,
+            )
+        except ValidationError as error:
+            form.add_error(None, error)
+            return self.form_invalid(form)
+        if not valid:
+            form.add_error("verification_code", "That code was not accepted. Try again or update the mobile number.")
+            return self.form_invalid(form)
+
+        self.lead.phone_verified = True
+        self.lead.verified_phone_number = self.lead.contact.phone_number
+        self.lead.modified_by = self.request.user
+        self.lead.save(update_fields=["phone_verified", "verified_phone_number", "modified_by", "modified"])
+        self.request.session["lead_enquiry_phone_verified"] = True
+        return redirect("leads:enquiry_success")
+
+
+class EnquiryPhoneUpdateView(LoginRequiredMixin, UserPassesTestMixin, FormView):
+    template_name = "leads/enquiry_edit_phone.html"
+    form_class = EnquiryPhoneUpdateForm
+
+    def test_func(self):
+        self.lead = get_object_or_404(
+            Lead.objects.select_related("contact"),
+            pk=self.kwargs["pk"],
+            created_by=self.request.user,
+        )
+        return self.request.user.is_staff and not self.lead.phone_verified
+
+    def get_initial(self):
+        return {"phone_number": self.lead.contact.phone_number}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["lead"] = self.lead
+        return context
+
+    def form_valid(self, form):
+        phone_number = form.cleaned_data["phone_number"]
+        if Contact.objects.filter(phone_number=phone_number).exclude(pk=self.lead.contact_id).exists():
+            form.add_error("phone_number", "This number is already linked to another contact. Please confirm the enquirer’s number.")
+            return self.form_invalid(form)
+        self.lead.contact.phone_number = phone_number
+        self.lead.contact.save()
+        try:
+            send_lead_phone_otp(
+                user=self.request.user,
+                lead=self.lead,
+                phone_number=self.lead.contact.phone_number,
+            )
+            self.request.session["lead_otp_message"] = "A new code was sent to the updated mobile number."
+        except (ValidationError, ImproperlyConfigured):
+            self.request.session["lead_otp_message"] = "The number was updated, but we could not send a code. Use Resend code to try again."
+        return redirect("leads:enquiry_verify", pk=self.lead.pk)
 
 
 class PublicEnquirySuccessView(TemplateView):
@@ -148,6 +270,9 @@ class PublicEnquirySuccessView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["light_navigation"] = True
+        context["phone_verified"] = self.request.session.pop(
+            "lead_enquiry_phone_verified", False
+        )
         return context
 
 

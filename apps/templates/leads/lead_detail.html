@@ -32,6 +32,8 @@
                 <div>
                     <dt>Phone</dt>
                     <dd>{{ lead.contact.phone_number }}</dd>
+                    <dt>Phone verification</dt>
+                    <dd>{% if lead.phone_verified and lead.verified_phone_number == lead.contact.phone_number %}Verified{% else %}Unverified{% endif %}</dd>
                 </div>
                 <div>
                     <dt>Email</dt>
@@ -48,6 +50,10 @@
                 <div>
                     <dt>Source</dt>
                     <dd>{{ lead.source }}</dd>
+                </div>
+                <div>
+                    <dt>Entered by</dt>
+                    <dd>{{ lead.created_by|default:"—" }}</dd>
                 </div>
                 <div>
                     <dt>Group Size</dt>

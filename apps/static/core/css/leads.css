@@ -457,6 +457,17 @@
     background: #1d4ed8;
 }
 
+.public-enquiry-form .enquiry-send-otp {
+    border: 1px solid #587463;
+    background: #fff;
+    color: #29483b;
+}
+
+.public-enquiry-form .enquiry-send-otp:hover { background: #f0f4ef; }
+.enquiry-otp-status { margin: 0; padding: 11px 13px; border-radius: 7px; background: #edf4ed; color: #29483b; font-size: 13px; line-height: 1.5; }
+.enquiry-phone-edit { display: block; margin-top: 20px; color: #29483b; font-size: 13px; font-weight: 600; text-align: center; }
+
+
 .enquiry-privacy-note {
     color: #94a3b8;
     font-size: 12px;
@@ -471,6 +482,7 @@
     .public-enquiry-header h1 {
         font-size: 24px;
     }
+
 }
 
 .enquiry-success {

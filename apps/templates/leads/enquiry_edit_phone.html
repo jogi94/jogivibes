@@ -1,0 +1,33 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Correct Enquirer Mobile | Jogi Vibes</title>
+    <link rel="stylesheet" href="{% static 'core/css/leads.css' %}">
+    <link rel="stylesheet" href="{% static 'core/css/travel-background.css' %}">
+</head>
+<body>
+<section class="public-enquiry-page travel-background">
+    <div class="public-enquiry-container">
+        <header class="public-enquiry-header">
+            <span class="enquiry-eyebrow">JOGI VIBES · UPDATE CONTACT</span>
+            <h1>Correct the mobile number</h1>
+            <p>Update the enquirer’s number and submit. We’ll send a fresh verification code to it.</p>
+        </header>
+        <form method="post" class="public-enquiry-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="lead-form-field">
+                <label for="{{ form.phone_number.id_for_label }}">{{ form.phone_number.label }}</label>
+                {{ form.phone_number }}
+                {% for error in form.phone_number.errors %}<small class="lead-form-error">{{ error }}</small>{% endfor %}
+            </div>
+            <button type="submit">Update Number &amp; Send Code</button>
+        </form>
+        <a class="enquiry-phone-edit" href="{% url 'leads:enquiry_verify' lead.pk %}">Back to code entry</a>
+    </div>
+</section>
+</body>
+</html>

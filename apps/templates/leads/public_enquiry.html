@@ -16,8 +16,8 @@
             <span class="enquiry-eyebrow">JOGI VIBES · HIMALAYAN ADVENTURES</span>
             <h1>Let's Plan Your Next Adventure</h1>
             <p>
-                Tell us a little about your travel plans.
-                Our team will get in touch with you shortly.
+                A Jogi Vibes team member is recording this enquiry on the traveller’s behalf.
+                We’ll send a one-time code to their mobile after you submit.
             </p>
         </header>
         <form method="post" action="{% url 'leads:leads_enquiry' %}" class="public-enquiry-form">
@@ -43,7 +43,7 @@
                 {% endif %}
             {% endfor %}
             <button type="submit">
-                Submit Enquiry
+                Submit &amp; Send Verification Code
                 <i class="ti ti-arrow-right"></i>
             </button>
             <p class="enquiry-privacy-note">
